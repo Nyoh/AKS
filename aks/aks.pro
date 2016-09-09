@@ -11,8 +11,7 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    bigunsigned.cpp \
-    aks.cpp
+    bigunsigned.cpp
 
 HEADERS +=\
     bigunsigned.h \

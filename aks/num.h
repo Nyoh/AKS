@@ -3,15 +3,21 @@
 
 #include <cstdint>
 
-namespace AKSN
+namespace Prime
 {
   // An interface class for big number implementations
   template <typename T> class Num
   {
   public:
-    // Return the number of bits in the number
+    // Returns the number of bits in the number
     // It is used in algorithm as a log2
-    std::uint64_t BitsNum() const
+    std::uint32_t BitsNum() const
+    {
+      static_assert(false, "Implement in specialized class");
+    }
+
+    // Returns bit with the given index
+    bool Bit(std::uint32_t index) const
     {
       static_assert(false, "Implement in specialized class");
     }
@@ -33,6 +39,12 @@ namespace AKSN
       return m_num > rhs.m_num;
     }
 
+    Num<T>& operator++()
+    {
+        ++m_num;
+        return *this;
+    }
+
     Num<T> operator+(const Num<T>& rhs) const
     {
       return m_num + rhs.m_num;
@@ -47,6 +59,11 @@ namespace AKSN
     {
       m_num *= rhs.m_num;
       return *this;
+    }
+
+    Num<T> operator%(const Num<T>& rhs) const
+    {
+        return m_num % rhs.m_num;
     }
 
     Num<T>& operator >>=(unsigned int shift)

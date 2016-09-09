@@ -14,8 +14,3 @@ BigUnsigned::BigUnsigned(uint32_t x)
   : m_data(1, x)
 {
 }
-
-BigUnsigned::BigUnsigned(uint64_t x)
-  : m_data(1, x)
-{
-}

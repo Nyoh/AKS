@@ -6,10 +6,10 @@
 int main(int argc, char *argv[])
 {
   BigUnsigned a((unsigned)5);
-  AKSN::TestNum b = 64;
+  Prime::TestNum b = 64;
 
   auto c = b.BitsNum();
-  auto d = AKSN::IsPerfectPower(b);
+  auto d = Prime::IsPrimeAKS(b);
 
   return 0;
 }

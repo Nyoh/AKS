@@ -5,19 +5,25 @@
 
 #include <num.h>
 
-namespace AKSN
+namespace Prime
 {
-  typedef AKSN::Num<std::uint64_t> TestNum;
+  typedef Prime::Num<std::uint64_t> TestNum;
 
   template <>
-  std::uint64_t TestNum::BitsNum() const
+  std::uint32_t TestNum::BitsNum() const
   {
     std::uint64_t value = m_num;
-    std::uint64_t result = 0;
+    std::uint32_t result = 0;
     while (value >>= 1)
       result++;
 
     return result;
+  }
+
+  template <>
+  bool TestNum::Bit(std::uint32_t index) const
+  {
+    return (m_num & (std::uint64_t(1) << index));
   }
 }
 
