@@ -10,7 +10,7 @@ BigUnsigned::BigUnsigned(std::uint16_t x)
 {
 }
 
-BigUnsigned::BigUnsigned(uint32_t x)
+BigUnsigned::BigUnsigned(std::uint32_t x)
   : m_data(1, x)
 {
 }
