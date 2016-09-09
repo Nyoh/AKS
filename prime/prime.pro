@@ -6,7 +6,7 @@
 
 QT       -= core gui
 
-TARGET = aks
+TARGET = prime
 TEMPLATE = lib
 CONFIG += staticlib
 

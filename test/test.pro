@@ -10,9 +10,9 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../aks/release/ -laks
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../aks/debug/ -laks
-else:unix: LIBS += -L$$OUT_PWD/../aks/ -laks
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../prime/release/ -laks
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../prime/debug/ -laks
+else:unix: LIBS += -L$$OUT_PWD/../prime/ -laks
 
-INCLUDEPATH += $$PWD/../aks
-DEPENDPATH += $$PWD/../aks
+INCLUDEPATH += $$PWD/../prime
+DEPENDPATH += $$PWD/../prime
