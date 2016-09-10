@@ -88,6 +88,34 @@ namespace Prime
             ++r;
         }
     }
+
+    // This method uses GCD binary method to tell if the values have gcd greater than 1
+    template <typename T>
+    bool HaveGCD(Num<T> first, Num<T> second)
+    {
+        while (first && second && first != second)
+        {
+          bool firstEven = !(first.bit(0));
+          bool secondEven = !(second.bit(0));
+
+          if (firstEven && secondEven)
+            return true;
+          else if (firstEven && !secondEven)
+              first >>= 1;
+          else if (!firstEven && secondEven)
+              second >>= 1;
+          else if (first >= second)
+              first = (first - second) >> 1;
+          else
+          {
+            Num<T> temp = first;
+            first = (second - first) >> 1;
+            second = temp;
+          }
+        }
+
+      return !first ? second > 1 : first > 1;
+    }
 }
 
 #endif // UTILS

@@ -34,9 +34,24 @@ namespace Prime
       return m_num == rhs.m_num;
     }
 
+    bool operator <(const Num<T>& rhs) const
+    {
+      return m_num < rhs.m_num;
+    }
+
+    bool operator <=(const Num<T>& rhs) const
+    {
+      return m_num <= rhs.m_num;
+    }
+
     bool operator >(const Num<T>& rhs) const
     {
-      return m_num > rhs.m_num;
+      return rhs.m_num <= m_num;
+    }
+
+    bool operator >=(const Num<T>& rhs) const
+    {
+      return rhs.m_num < m_num;
     }
 
     Num<T>& operator++()
