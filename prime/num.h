@@ -1,6 +1,7 @@
 #ifndef NUM
 #define NUM
 
+#include <assert.h>
 #include <cstdint>
 
 namespace Prime
@@ -24,21 +25,57 @@ namespace Prime
       return false;
     }
 
-    Num () {}
+    bool IsNull() const
+    {
+      return m_num == 0;
+    }
+
+    Num ()
+      : m_num()
+    {}
+
+    explicit Num(std::uint32_t value)
+      : m_num(value)
+    {
+    }
 
     explicit Num(std::uint64_t value)
       : m_num(value)
     {
     }
 
-    operator bool() const
+    explicit Num(int value)
+      : m_num(static_cast<std::uint32_t>(value))
     {
-      return m_num != 0;
+      assert(value >= 0);
+    }
+
+    bool operator ==(int rhs) const
+    {
+      assert(rhs >= 0);
+      return m_num == static_cast<unsigned int>(rhs);
+    }
+
+    bool operator >(int rhs) const
+    {
+      assert(rhs >= 0);
+      return m_num > static_cast<unsigned int>(rhs);
+    }
+
+    bool operator <(int rhs) const
+    {
+      assert(rhs >= 0);
+      return m_num < static_cast<unsigned int>(rhs);
     }
 
     bool operator ==(const Num<T>& rhs) const
     {
       return m_num == rhs.m_num;
+    }
+
+    bool operator !=(const Num<T>& rhs) const
+    {
+      return m_num != rhs.m_num;
     }
 
     bool operator <(const Num<T>& rhs) const

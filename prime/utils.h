@@ -93,7 +93,7 @@ namespace Prime
     template <typename T>
     bool HaveGCD(Num<T> first, Num<T> second)
     {
-        while (first && second && first != second)
+        while (!first.IsNull() && !second.IsNull() && first != second)
         {
           bool firstEven = !(first.Bit(0));
           bool secondEven = !(second.Bit(0));
@@ -114,7 +114,7 @@ namespace Prime
           }
         }
 
-      return !first ? second > 1 : first > 1;
+      return first.IsNull() ? second > 1 : first > 1;
     }
 }
 
