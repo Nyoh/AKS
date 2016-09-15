@@ -95,8 +95,8 @@ namespace Prime
     {
         while (first && second && first != second)
         {
-          bool firstEven = !(first.bit(0));
-          bool secondEven = !(second.bit(0));
+          bool firstEven = !(first.Bit(0));
+          bool secondEven = !(second.Bit(0));
 
           if (firstEven && secondEven)
             return true;

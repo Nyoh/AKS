@@ -20,7 +20,6 @@ namespace Prime
             return true;
 
         for (Num<T> i = 2; i < r; ++i) {
-            GCD(gcd, a, n);
             if (HaveGCD(i, value))
                 return false;
         }
