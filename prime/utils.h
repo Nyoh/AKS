@@ -8,7 +8,7 @@ namespace Prime
     template <typename T>
     Num<T> Pow(const Num<T>& base, std::uint64_t power)
     {
-        Num<T> result = 1;
+        Num<T> result = Num<T>(1);
         while (power)
         {
             if (power % 2)
@@ -25,7 +25,7 @@ namespace Prime
     bool IsPerfectPower(const Num<T>& value)
     {
         Num<T> upperBound = value;
-        Num<T> lowerBound = 1;
+        Num<T> lowerBound = Num<T>(1);
         const auto log2 = value.BitsNum();
         for (std::uint64_t i = 1; i < log2; i++)
         {
@@ -50,10 +50,10 @@ namespace Prime
     template <typename T>
     Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const Num<T>& q)
     {
+        Num<T> result = Num<T>(1);
         if (j == 0)
-            return 1;
+            return result;
 
-        Num<T> result = 1;
         for (auto i = j.BitsNum() - 1; i >= 0; i--) {
             result = (result * result) % q;
             if (j.Bit(i) == true)
@@ -69,7 +69,7 @@ namespace Prime
         std::uint64_t log2Pow2 = value.BitsNum();
         log2Pow2 *= log2Pow2;
 
-        Num<T> r = log2Pow2 + 1;
+        Num<T> r = Num<T>(log2Pow2 + 1);
         while(true)
         {
             bool foundR = true;

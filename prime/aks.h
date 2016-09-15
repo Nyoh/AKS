@@ -19,7 +19,7 @@ namespace Prime
         if (r >= value)
             return true;
 
-        for (Num<T> i = 2; i < r; ++i) {
+        for (Num<T> i = Num<T>(2); i < r; ++i) {
             if (HaveGCD(i, value))
                 return false;
         }

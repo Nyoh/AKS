@@ -7,10 +7,10 @@
 
 namespace Prime
 {
-  typedef Prime::Num<std::uint64_t> TestNum;
+  typedef Prime::Num<std::uint64_t> Num64;
 
   template <>
-  std::uint32_t TestNum::BitsNum() const
+  std::uint32_t Num64::BitsNum() const
   {
     std::uint64_t value = m_num;
     std::uint32_t result = 0;
@@ -21,7 +21,7 @@ namespace Prime
   }
 
   template <>
-  bool TestNum::Bit(std::uint32_t index) const
+  bool Num64::Bit(std::uint32_t index) const
   {
     return (m_num & (std::uint64_t(1) << index));
   }

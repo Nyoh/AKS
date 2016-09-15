@@ -13,20 +13,27 @@ namespace Prime
     // It is used in algorithm as a log2
     std::uint32_t BitsNum() const
     {
-      static_assert(false, "Implement in specialized class");
+      static_assert(sizeof(T) == -1, "Implement in specialized class");
+      return 0;
     }
 
     // Returns bit with the given index
-    bool Bit(std::uint32_t index) const
+    bool Bit(std::uint32_t /*index*/) const
     {
-      static_assert(false, "Implement in specialized class");
+      static_assert(sizeof(T) == -1, "Implement in specialized class");
+      return false;
     }
 
     Num () {}
 
-    Num(std::uint64_t value)
+    explicit Num(std::uint64_t value)
       : m_num(value)
     {
+    }
+
+    operator bool() const
+    {
+      return m_num != 0;
     }
 
     bool operator ==(const Num<T>& rhs) const
@@ -62,12 +69,17 @@ namespace Prime
 
     Num<T> operator+(const Num<T>& rhs) const
     {
-      return m_num + rhs.m_num;
+      return Num<T>(m_num + rhs.m_num);
+    }
+
+    Num<T> operator-(const Num<T>& rhs) const
+    {
+      return Num<T>(m_num - rhs.m_num);
     }
 
     Num<T> operator*(const Num<T>& rhs) const
     {
-      return m_num * rhs.m_num;
+      return Num<T>(m_num * rhs.m_num);
     }
 
     Num<T>& operator *=(const Num<T>& rhs)
@@ -78,16 +90,16 @@ namespace Prime
 
     Num<T> operator%(const Num<T>& rhs) const
     {
-        return m_num % rhs.m_num;
+        return Num<T>(m_num % rhs.m_num);
     }
 
-    Num<T>& operator >>=(unsigned int shift)
+    Num<T>& operator >>=(int shift)
     {
       m_num >>= shift;
       return *this;
     }
 
-    Num<T> operator >>(unsigned int shift) const
+    Num<T> operator >>(int shift) const
     {
       return Num<T>(*this) >>= shift;
     }

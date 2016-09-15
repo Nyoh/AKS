@@ -18,7 +18,7 @@ HEADERS +=\
     aks.h \
     num.h \
     utils.h \
-    testnum.h
+    num64.h
 
 unix {
     target.path = /usr/lib
