@@ -48,9 +48,18 @@ namespace Prime
     }
 
     // Mod the polynomial by x^r - 1, n
-    void Mod(const std::uint64_t r, const Num<T>& n)
+    void Mod(const std::uint64_t r, const T& n)
     {
-
+      if (r <= GetDegree())
+      {
+        for (std::uint64_t i = GetDegree(); i >= r; i--)
+        {
+          m_coefficients[i - r] += m_coefficients[i];
+        }
+        SetDegree(r - 1);
+      }
+      for (auto& coeff : m_coefficients)
+        coeff %= n;
     }
 
  // private:

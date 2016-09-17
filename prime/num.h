@@ -145,6 +145,12 @@ namespace Prime
         return Num<T>(m_num % rhs.m_num);
     }
 
+    Num<T>& operator %=(const Num<T>& rhs)
+    {
+      m_num %= rhs.m_num;
+      return *this;
+    }
+
     Num<T>& operator >>=(int shift)
     {
       m_num >>= shift;

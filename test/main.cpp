@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
   a1.m_coefficients[1] = Prime::Num64(3);
   Prime::Polynomial<Prime::Num64> a2 = a1;
   a2 *= a1;
+  a2.Mod(1, Prime::Num64(99));
 
   return 0;
 }
