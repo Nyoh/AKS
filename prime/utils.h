@@ -1,122 +1,28 @@
-#ifndef UTILS
-#define UTILS
+#ifndef UTILS_H
+#define UTILS_H
 
-#include <num.h>
+#include <cstdint>
 
 namespace Prime
 {
-    template <typename T>
-    Num<T> Pow(const Num<T>& base, std::uint64_t power)
-    {
-        Num<T> result = Num<T>(1);
-        while (power)
-        {
-            if (power % 2)
-                result *= base;
+  std::uint32_t HighestBit(std::uint64_t value)
+  {
+    std::uint32_t result = 0;
+    while (value >>= 1)
+      result++;
 
-            result *= result;
-            power /= 2; // divide by two
-        }
+    return result;
+  }
 
-        return result;
-    }
-
-    template <typename T>
-    bool IsPerfectPower(const Num<T>& value)
-    {
-        Num<T> upperBound = value;
-        Num<T> lowerBound = Num<T>(1);
-        const auto log2 = value.BitsNum();
-        for (std::uint64_t i = 1; i < log2; i++)
-        {
-            while (upperBound > lowerBound)
-            {
-                const Num<T> candidateBase = (lowerBound + upperBound) >> 1; // Shifting is to divide by two
-                const Num<T> candidate = Pow(candidateBase, i + 1);
-                if (value == candidate)
-                    return true;
-
-                if (candidate > value)
-                    upperBound = candidateBase;
-                else
-                    lowerBound = candidateBase;
-            }
-        }
-
-        return false;
-    }
-
-    // Calculates n^j mod q
-    template <typename T>
-    Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const Num<T>& q)
-    {
-        Num<T> result = Num<T>(1);
-        if (j == 0)
-            return result;
-
-        for (auto i = j.BitsNum() - 1; i >= 0; i--) {
-            result = (result * result) % q;
-            if (j.Bit(i) == true)
-                result = (result * n) % q;
-        }
-
-        return result;
-    }
-
-    template <typename T>
-    Num<T> FindR(const Num<T>& value)
-    {
-        std::uint64_t log2Pow2 = value.BitsNum();
-        log2Pow2 *= log2Pow2;
-
-        Num<T> r = Num<T>(log2Pow2 + 1);
-        while(true)
-        {
-            bool foundR = true;
-            for (std::uint64_t j = 1; j <= log2Pow2; j++)
-            {
-                if (PowerMod(value, Num<T>(j), r) == 1)
-                {
-                    foundR = false;
-                    break;
-                }
-            }
-
-            if (foundR)
-                return r;
-
-            ++r;
-        }
-    }
-
-    // This method uses GCD binary method to tell if the values have gcd greater than 1
-    template <typename T>
-    bool HaveGCD(Num<T> first, Num<T> second)
-    {
-        while (!first.IsNull() && !second.IsNull() && first != second)
-        {
-          bool firstEven = !(first.Bit(0));
-          bool secondEven = !(second.Bit(0));
-
-          if (firstEven && secondEven)
-            return true;
-          else if (firstEven && !secondEven)
-              first >>= 1;
-          else if (!firstEven && secondEven)
-              second >>= 1;
-          else if (first >= second)
-              first = (first - second) >> 1;
-          else
-          {
-            Num<T> temp = first;
-            first = (second - first) >> 1;
-            second = temp;
-          }
-        }
-
-      return first.IsNull() ? second > 1 : first > 1;
-    }
+  std::uint64_t NextPowerOf2(std::uint64_t value)
+  {
+    std::uint64_t result = 1;
+    result <<= HighestBit(value);
+    if (value > result)
+      result <<= 1;
+    return result;
+  }
 }
 
-#endif // UTILS
+#endif // UTILS_H
 

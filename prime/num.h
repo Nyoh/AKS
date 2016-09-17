@@ -30,6 +30,11 @@ namespace Prime
       return m_num == 0;
     }
 
+    void Swap(Num<T>& other)
+    {
+      std::swap(*this, other);
+    }
+
     Num ()
       : m_num()
     {}
@@ -62,10 +67,14 @@ namespace Prime
       return m_num > static_cast<unsigned int>(rhs);
     }
 
-    bool operator <(int rhs) const
+    bool operator <(const std::uint64_t rhs) const
     {
-      assert(rhs >= 0);
-      return m_num < static_cast<unsigned int>(rhs);
+      return m_num < rhs;//static_cast<unsigned int>(rhs);
+    }
+
+    Num<T> operator%(const std::uint64_t rhs) const
+    {
+        return Num<T>(m_num % rhs);
     }
 
     bool operator ==(const Num<T>& rhs) const

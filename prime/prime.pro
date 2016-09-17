@@ -11,14 +11,15 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    bigunsigned.cpp
+    utils.cpp
 
 HEADERS +=\
-    bigunsigned.h \
     aks.h \
     num.h \
-    utils.h \
-    num64.h
+    num64.h \
+    polynomial.h \
+    aks_utils.h \
+    utils.h
 
 unix {
     target.path = /usr/lib

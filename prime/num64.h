@@ -1,9 +1,8 @@
 #ifndef TESTNUM
 #define TESTNUM
 
-
-
-#include <num.h>
+#include "num.h"
+#include "utils.h"
 
 namespace Prime
 {
@@ -12,18 +11,13 @@ namespace Prime
   template <>
   std::uint32_t Num64::BitsNum() const
   {
-    std::uint64_t value = m_num;
-    std::uint32_t result = 0;
-    while (value >>= 1)
-      result++;
-
-    return result;
+    return HighestBit(m_num);
   }
 
   template <>
   bool Num64::Bit(std::uint32_t index) const
   {
-    return (m_num & (std::uint64_t(1) << index));
+    return (m_num & (std::uint64_t(1) << index)) != 0;
   }
 }
 
