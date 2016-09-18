@@ -47,6 +47,11 @@ namespace Prime
       return *this;
     }
 
+    bool operator !=(Polynomial<T>& rhs)
+    {
+      return m_coefficients != rhs.m_coefficients;
+    }
+
     // Mod the polynomial by x^r - 1, n
     void Mod(const std::uint64_t r, const T& n)
     {
@@ -60,9 +65,36 @@ namespace Prime
       }
       for (auto& coeff : m_coefficients)
         coeff %= n;
+
+      Shrink();
     }
 
- // private:
+    // Pows and mods by x^r - 1, n
+    void PowMod(T power, const std::uint64_t r, const T& n)
+    {
+      Polynomial<T> result = *this;
+      while (!power.IsNull())
+      {
+        if (power.IsOdd())
+        {
+          result *= *this;
+          result.Mod(r, n);
+        }
+
+        result *= result;
+        power <<= 1; // divide by two
+        result.Mod(r, n);
+      }
+
+      result.m_coefficients.swap(m_coefficients);
+    }
+
+  T& operator[](const std::uint64_t index)
+  {
+    return m_coefficients[index];
+  }
+
+  private:
     std::vector<T> m_coefficients;
 
     void Shrink()
@@ -80,25 +112,25 @@ namespace Prime
               const typename std::vector<T>::iterator& bBegin, const  typename std::vector<T>::iterator& bEnd,
               const typename std::vector<T>::iterator& rBegin)
     {
-        assert(aEnd - aBegin == bEnd - bBegin);
-        if (aEnd - aBegin == 1)
-        {
-          *rBegin += *aBegin * *bBegin;
-          return;
-        }
-        else if (aEnd - aBegin == 2)
-        {
-          *rBegin += *aBegin * *bBegin;
-          *(rBegin + 1) += *(aBegin + 1) * *bBegin + *aBegin * *(bBegin + 1);
-          *(rBegin + 2) += *(aBegin + 1) * *(bBegin + 1);
-        }
-        else
-        {
-          Mult(aBegin, aBegin + (aEnd - aBegin) / 2, bBegin, bBegin + (bEnd - bBegin) / 2, rBegin); //A0 + B0
-          Mult(aBegin, aBegin + (aEnd - aBegin) / 2, bBegin + (bEnd - bBegin) / 2, bEnd, rBegin  + (bEnd - bBegin) / 2); //A0 + B1
-          Mult(aBegin + (aEnd - aBegin) / 2, aEnd, bBegin, bBegin + (bEnd - bBegin) / 2, rBegin  + (bEnd - bBegin) / 2); //A1 + B0
-          Mult(aBegin + (aEnd - aBegin) / 2, aEnd, bBegin + (bEnd - bBegin) / 2, bEnd, rBegin  + (bEnd - bBegin)); //A1 + B1
-        }
+      assert(aEnd - aBegin == bEnd - bBegin);
+      if (aEnd - aBegin == 1)
+      {
+        *rBegin += *aBegin * *bBegin;
+        return;
+      }
+      else if (aEnd - aBegin == 2)
+      {
+        *rBegin += *aBegin * *bBegin;
+        *(rBegin + 1) += *(aBegin + 1) * *bBegin + *aBegin * *(bBegin + 1);
+        *(rBegin + 2) += *(aBegin + 1) * *(bBegin + 1);
+      }
+      else
+      {
+        Mult(aBegin, aBegin + (aEnd - aBegin) / 2, bBegin, bBegin + (bEnd - bBegin) / 2, rBegin); //A0 + B0
+        Mult(aBegin, aBegin + (aEnd - aBegin) / 2, bBegin + (bEnd - bBegin) / 2, bEnd, rBegin  + (bEnd - bBegin) / 2); //A0 + B1
+        Mult(aBegin + (aEnd - aBegin) / 2, aEnd, bBegin, bBegin + (bEnd - bBegin) / 2, rBegin  + (bEnd - bBegin) / 2); //A1 + B0
+        Mult(aBegin + (aEnd - aBegin) / 2, aEnd, bBegin + (bEnd - bBegin) / 2, bEnd, rBegin  + (bEnd - bBegin)); //A1 + B1
+      }
     }
   };
 }

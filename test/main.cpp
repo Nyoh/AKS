@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <aks.h>
 #include <num64.h>
 #include <aks_utils.h>
@@ -10,13 +12,13 @@ int main(int argc, char *argv[])
   auto c = b.BitsNum();
   auto d = Prime::IsPrimeAKS(b);
 
-  Prime::Polynomial<Prime::Num64> a1;
-  a1.SetDegree(1);
-  a1.m_coefficients[0] = Prime::Num64(1);
-  a1.m_coefficients[1] = Prime::Num64(3);
-  Prime::Polynomial<Prime::Num64> a2 = a1;
-  a2 *= a1;
-  a2.Mod(1, Prime::Num64(99));
+//  for (int i = 0; i < 20; i++)
+  //{
+    //std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
+  //}
+
+  std::cout << 5 << " " << IsPrimeAKS(Prime::Num64(5)) << std::endl;
+
 
   return 0;
 }

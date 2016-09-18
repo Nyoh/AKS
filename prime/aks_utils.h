@@ -29,7 +29,7 @@ namespace Prime
         const auto log2 = value.BitsNum();
         for (std::uint64_t i = 1; i < log2; i++)
         {
-            while (upperBound > lowerBound)
+            while (upperBound >= lowerBound)
             {
                 const Num<T> candidateBase = (lowerBound + upperBound) >> 1; // Shifting is to divide by two
                 const Num<T> candidate = Pow(candidateBase, i + 1);
@@ -37,9 +37,9 @@ namespace Prime
                     return true;
 
                 if (candidate > value)
-                    upperBound = candidateBase;
+                    upperBound = candidateBase - 1;
                 else
-                    lowerBound = candidateBase;
+                    lowerBound = candidateBase + 1;
             }
         }
 
@@ -50,9 +50,12 @@ namespace Prime
     template <typename T>
     Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const std::uint64_t q)
     {
-        Num<T> result = Num<T>(1);
-        if (j == 0)
-            return result;
+        if (j == Num<T>(0))
+          return Num<T>(1);
+        else if (j == Num<T>(1))
+          return n;
+
+        Num<T> result = n;
 
         for (auto i = j.BitsNum() - 1; i >= 0; i--) {
             result = (result * result) % q;
@@ -93,6 +96,9 @@ namespace Prime
     template <typename T>
     bool HaveGCD(Num<T> first, Num<T> second)
     {
+      if (first == 1 || second == 1)
+        return false;
+
         while (!first.IsNull() && !second.IsNull() && first != second)
         {
           bool firstEven = !(first.Bit(0));

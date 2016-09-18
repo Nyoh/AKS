@@ -1,6 +1,7 @@
 #ifndef NUM
 #define NUM
 
+#include <algorithm>
 #include <assert.h>
 #include <cstdint>
 
@@ -33,6 +34,11 @@ namespace Prime
     void Swap(Num<T>& other)
     {
       std::swap(*this, other);
+    }
+
+    bool IsOdd() const
+    {
+      return m_num % 2 == 1;
     }
 
     Num ()
@@ -69,7 +75,7 @@ namespace Prime
 
     bool operator <(const std::uint64_t rhs) const
     {
-      return m_num < rhs;//static_cast<unsigned int>(rhs);
+      return m_num < rhs;
     }
 
     Num<T> operator%(const std::uint64_t rhs) const
@@ -118,15 +124,34 @@ namespace Prime
       return Num<T>(m_num + rhs.m_num);
     }
 
+    Num<T> operator+(const std::uint64_t rhs) const
+    {
+      return Num<T>(m_num + rhs);
+    }
+
     Num<T>& operator +=(const Num<T>& rhs)
     {
       m_num += rhs.m_num;
       return *this;
     }
 
+    Num<T> operator-(const std::uint64_t rhs) const
+    {
+      assert(m_num > rhs);
+      return Num<T>(m_num - rhs);
+    }
+
     Num<T> operator-(const Num<T>& rhs) const
     {
+      assert(m_num > rhs.m_num);
       return Num<T>(m_num - rhs.m_num);
+    }
+
+    Num<T>& operator -=(const Num<T>& rhs)
+    {
+      assert(m_num > rhs.m_num);
+      m_num -= rhs.m_num;
+      return *this;
     }
 
     Num<T> operator*(const Num<T>& rhs) const
@@ -160,6 +185,12 @@ namespace Prime
     Num<T> operator >>(int shift) const
     {
       return Num<T>(*this) >>= shift;
+    }
+
+    Num<T>& operator <<=(int shift)
+    {
+      m_num <<= shift;
+      return *this;
     }
 
   private:
