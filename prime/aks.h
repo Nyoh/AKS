@@ -28,22 +28,22 @@ namespace Prime
         const auto polyLimit = std::sqrt(r) * value.BitsNum();
         for (std::uint64_t i = 1; i < polyLimit; i++)
         {
-          Polynomial<Num<T>> lhs;
-          lhs.SetDegree(1);
-          lhs[1] = Num<T>(1);
-          lhs[0] = Num<T>(i);
-          lhs.PowMod(value, r, value);  // lhs = (x + i)^r
+            Polynomial<Num<T>> lhs;
+            lhs.SetDegree(1);
+            lhs[1] = Num<T>(1);
+            lhs[0] = Num<T>(i);
+            lhs.PowMod(value, r, value);  // lhs = (x + i)^r
 
-          Polynomial<Num<T>> rhs;
-          rhs.SetDegree(1);
-          rhs[1] = Num<T>(1);
-          rhs.PowMod(value, r, value);  // lhs = x^r
+            Polynomial<Num<T>> rhs;
+            rhs.SetDegree(1);
+            rhs[1] = Num<T>(1);
+            rhs.PowMod(value, r, value);  // lhs = x^r
 
-          rhs[0] += Num<T>(i);
-          rhs.Mod(r, value);
+            rhs[0] += Num<T>(i);
+            rhs.Mod(r, value);
 
-          if (rhs != lhs)
-            return false;
+            if (rhs != lhs)
+                return false;
         }
 
         return true;

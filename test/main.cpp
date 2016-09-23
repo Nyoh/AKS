@@ -9,20 +9,20 @@
 
 int main(int argc, char *argv[])
 {
-  TestBigNum();
-  Prime::Num64 b = Prime::Num64(64);
+    TestBigNum();
+    Prime::Num64 b = Prime::Num64(64);
 
-  auto c = b.BitsNum();
-  auto d = Prime::IsPrimeAKS(b);
+    auto c = b.BitsNum();
+    auto d = Prime::IsPrimeAKS(b);
 
-//  for (int i = 0; i < 20; i++)
-  //{
-    //std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
-  //}
+    for (int i = 0; i < 20; i++)
+    {
+        std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
+    }
 
-  for (int i = 17; i <= 20; i++)
-    std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
+    for (int i = 1; i <= 20; i++)
+        std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
 
 
-  return 0;
+    return 0;
 }

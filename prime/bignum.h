@@ -15,6 +15,8 @@ namespace Prime
         const static auto ChunkSizeBytes = sizeof(std::uint32_t);
         std::vector<std::uint32_t> data;
 
+        BigNumData() {}
+
         explicit BigNumData(std::uint32_t value)
             : data{value}
         {
@@ -42,6 +44,106 @@ namespace Prime
         {
             return data != rhs.data;
         }
+
+        BigNumData& operator <<=(int shift)
+        {
+            assert(shift >= 0);
+            const std::size_t bigShift = shift / ChunkSizeBits;
+            data.reserve(data.size() + bigShift + 1);
+            data.resize(data.size() + bigShift);
+
+            memmove(data.data() + bigShift, data.data(), (data.size() - bigShift) * ChunkSizeBytes);
+            std::memset(data.data(), 0, bigShift * ChunkSizeBytes);
+
+            shift %= ChunkSizeBits;
+            if (!shift)
+                return *this;
+
+            data.push_back(0);
+            std::uint64_t temp = 0;
+            for (auto& chunk : data)
+            {
+                temp = (static_cast<std::uint64_t>(chunk) << shift) | (temp >> ChunkSizeBits);
+                chunk = static_cast<std::uint32_t>(temp);
+            }
+
+            Shrink();
+            return *this;
+        }
+
+        BigNumData& operator >>=(int shift)
+        {
+            assert(shift >= 0);
+            const std::size_t bigShift = shift / ChunkSizeBits;
+            if (bigShift >= data.size())
+            {
+                data.resize(1);
+                data[0] = 0;
+                return *this;
+            }
+
+            memmove(data.data(), data.data() + bigShift, (data.size() - bigShift) * ChunkSizeBytes);
+            data.resize(data.size() - bigShift);
+
+            shift %= ChunkSizeBits;
+            if (!shift)
+                return *this;
+
+            std::uint64_t temp = 0;
+            for (auto chunk = data.rbegin(); chunk != data.rend(); ++chunk)
+            {
+                temp = (static_cast<std::uint64_t>(*chunk) << (ChunkSizeBits - shift));
+                *chunk = static_cast<std::uint32_t>(temp >> ChunkSizeBits);
+                temp >>= ChunkSizeBits;
+            }
+
+            Shrink();
+            return *this;
+        }
+
+        BigNumData& operator+=(const BigNumData& rhs)
+        {
+            Add(*this, rhs, *this);
+            return *this;
+        }
+
+
+        BigNumData operator+(const BigNumData& rhs) const
+        {
+            BigNumData result;
+            Add(*this, rhs, result);
+            return result;
+        }
+
+    private:
+        static void Add(const BigNumData& a, const BigNumData& b, BigNumData& result)
+        {
+            result.data.reserve(std::max(a.data.size(), b.data.size()) + 1);
+            result.data.resize(result.data.capacity() - 1);
+
+            const BigNumData& big = (a.data.size() > b.data.size() ? a : b);
+            const BigNumData& small = (a.data.size() > b.data.size() ? b : a);
+
+            bool over = false;
+            for (size_t i = 0; i != big.data.size(); i++)
+            {
+                std::uint64_t chunkSum = big.data[i];
+                if (i < small.data.size())
+                    chunkSum += small.data[i];
+
+                if (i < result.data.size())
+                    result.data.push_back(0);
+
+                if (over)
+                    chunkSum++;
+
+                result.data[i] = static_cast<std::uint32_t>(chunkSum);
+                over = ((chunkSum >> ChunkSizeBits) != 0);
+
+            }
+            if (over)
+                result.data.push_back(1);
+        }
     };
 
     typedef Prime::Num<BigNumData> BigNum;
@@ -56,64 +158,6 @@ namespace Prime
     bool BigNum::Bit(std::uint32_t index) const
     {
         return (m_num.data[index / m_num.ChunkSizeBits] & (std::uint64_t(1) << (index % m_num.ChunkSizeBits))) != 0;
-    }
-
-    template <>
-    BigNum& BigNum::operator <<=(int shift)
-    {
-        assert(shift >= 0);
-        const std::size_t bigShift = shift / m_num.ChunkSizeBits;
-        m_num.data.reserve(m_num.data.size() + bigShift + 1);
-        m_num.data.resize(m_num.data.size() + bigShift);
-
-        memmove(m_num.data.data() + bigShift, m_num.data.data(), (m_num.data.size() - bigShift) * m_num.ChunkSizeBytes);
-        std::memset(m_num.data.data(), 0, bigShift * m_num.ChunkSizeBytes);
-
-        shift %= m_num.ChunkSizeBits;
-        if (!shift)
-            return *this;
-
-        m_num.data.push_back(0);
-        std::uint64_t temp = 0;
-        for (auto& chunk : m_num.data)
-        {
-            temp = (static_cast<std::uint64_t>(chunk) << shift) | (temp >> m_num.ChunkSizeBits);
-            chunk = static_cast<std::uint32_t>(temp);
-        }
-
-        m_num.Shrink();
-        return *this;
-    }
-
-    template <>
-    BigNum& BigNum::operator >>=(int shift)
-    {
-        assert(shift >= 0);
-        const std::size_t bigShift = shift / m_num.ChunkSizeBits;
-        if (bigShift >= m_num.data.size())
-        {
-            m_num.data.resize(1);
-            m_num.data[0] = 0;
-            return *this;
-        }
-
-        memmove(m_num.data.data(), m_num.data.data() + bigShift, (m_num.data.size() - bigShift) * m_num.ChunkSizeBytes);
-        m_num.data.resize(m_num.data.size() - bigShift);
-
-        shift %= m_num.ChunkSizeBits;
-        if (!shift)
-            return *this;
-
-        std::uint64_t temp = 0;
-        for (auto chunk = m_num.data.rbegin(); chunk != m_num.data.rend(); ++chunk)
-        {
-            temp = (static_cast<std::uint64_t>(*chunk) << (m_num.ChunkSizeBits - shift));
-            *chunk = static_cast<std::uint32_t>(temp >> m_num.ChunkSizeBits);
-            temp >>= m_num.ChunkSizeBits;
-        }
-
-        m_num.Shrink();
-        return *this;
     }
 }
 

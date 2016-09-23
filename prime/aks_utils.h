@@ -51,9 +51,9 @@ namespace Prime
     Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const std::uint64_t q)
     {
         if (j == Num<T>(0))
-          return Num<T>(1);
+            return Num<T>(1);
         else if (j == Num<T>(1))
-          return n;
+            return n;
 
         Num<T> result = n;
 
@@ -96,31 +96,31 @@ namespace Prime
     template <typename T>
     bool HaveGCD(Num<T> first, Num<T> second)
     {
-      if (first == 1 || second == 1)
-        return false;
+        if (first == 1 || second == 1)
+            return false;
 
         while (!first.IsNull() && !second.IsNull() && first != second)
         {
-          bool firstEven = !(first.Bit(0));
-          bool secondEven = !(second.Bit(0));
+            bool firstEven = !(first.Bit(0));
+            bool secondEven = !(second.Bit(0));
 
-          if (firstEven && secondEven)
-            return true;
-          else if (firstEven && !secondEven)
-              first >>= 1;
-          else if (!firstEven && secondEven)
-              second >>= 1;
-          else if (first >= second)
-              first = (first - second) >> 1;
-          else
-          {
-            Num<T> temp = first;
-            first = (second - first) >> 1;
-            second = temp;
-          }
+            if (firstEven && secondEven)
+                return true;
+            else if (firstEven && !secondEven)
+                first >>= 1;
+            else if (!firstEven && secondEven)
+                second >>= 1;
+            else if (first >= second)
+                first = (first - second) >> 1;
+            else
+            {
+                Num<T> temp = first;
+                first = (second - first) >> 1;
+                second = temp;
+            }
         }
 
-      return first.IsNull() ? second > 1 : first > 1;
+        return first.IsNull() ? second > 1 : first > 1;
     }
 }
 

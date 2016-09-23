@@ -6,33 +6,19 @@
 
 namespace Prime
 {
-  typedef Prime::Num<std::uint64_t> Num64;
+    typedef Prime::Num<std::uint64_t> Num64;
 
-  template <>
-  std::uint32_t Num64::BitsNum() const
-  {
-    return HighestBit(m_num);
-  }
+    template <>
+    std::uint32_t Num64::BitsNum() const
+    {
+        return HighestBit(m_num);
+    }
 
-  template <>
-  bool Num64::Bit(std::uint32_t index) const
-  {
-    return (m_num & (std::uint64_t(1) << index)) != 0;
-  }
-
-  template <>
-  Num64& Num64::operator <<=(int shift)
-  {
-    m_num <<= shift;
-    return *this;
-  }
-
-  template <>
-  Num64& Num64::operator >>=(int shift)
-  {
-    m_num >>= shift;
-    return *this;
-  }
+    template <>
+    bool Num64::Bit(std::uint32_t index) const
+    {
+        return (m_num & (std::uint64_t(1) << index)) != 0;
+    }
 }
 
 #endif // TESTNUM
