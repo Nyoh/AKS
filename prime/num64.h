@@ -26,6 +26,13 @@ namespace Prime
     m_num <<= shift;
     return *this;
   }
+
+  template <>
+  Num64& Num64::operator >>=(int shift)
+  {
+    m_num >>= shift;
+    return *this;
+  }
 }
 
 #endif // TESTNUM
