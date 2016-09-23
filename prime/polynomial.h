@@ -86,7 +86,8 @@ namespace Prime
           result *= *this;
           result.Mod(r, n);
         }
-        else if (power > 1)
+
+        if (power > 1)
           *this *= *this;
 
         power >>= 1; // divide by two

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     //std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
   //}
 
-  for (int i = 1; i <= 20; i++)
+  for (int i = 17; i <= 20; i++)
     std::cout << i << " " << IsPrimeAKS(Prime::Num64(i)) << std::endl;
 
 
