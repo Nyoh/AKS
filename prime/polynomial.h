@@ -34,16 +34,17 @@ namespace Prime
 
     Polynomial<T>& operator *=(Polynomial<T>& rhs)
     {
-      const auto degree = NextPowerOf2(std::max(GetDegree(), rhs.GetDegree()));
-      SetDegree(degree);
-      rhs.SetDegree(degree);
-      Polynomial<T> result{degree * 2};
+      const auto alignedSize = NextPowerOf2(std::max(m_coefficients.size(), rhs.m_coefficients.size()));
+      m_coefficients.resize(alignedSize);
+      rhs.m_coefficients.resize(alignedSize);
+      Polynomial<T> result{alignedSize * 2};
       Mult(m_coefficients.begin(), m_coefficients.end(),
            rhs.m_coefficients.begin(), rhs.m_coefficients.end(),
            result.m_coefficients.begin());
 
       result.m_coefficients.swap(m_coefficients);
       Shrink();
+      rhs.Shrink();
       return *this;
     }
 
@@ -55,6 +56,9 @@ namespace Prime
     // Mod the polynomial by x^r - 1, n
     void Mod(const std::uint64_t r, const T& n)
     {
+      if (m_coefficients.empty())
+        return;
+
       if (r <= GetDegree())
       {
         for (std::uint64_t i = GetDegree(); i >= r; i--)
@@ -72,7 +76,9 @@ namespace Prime
     // Pows and mods by x^r - 1, n
     void PowMod(T power, const std::uint64_t r, const T& n)
     {
-      Polynomial<T> result = *this;
+      Polynomial<T> result{1};
+      result[0] = T(1);
+
       while (!power.IsNull())
       {
         if (power.IsOdd())
@@ -80,9 +86,10 @@ namespace Prime
           result *= *this;
           result.Mod(r, n);
         }
+        else if (power > 1)
+          *this *= *this;
 
-        result *= result;
-        power <<= 1; // divide by two
+        power >>= 1; // divide by two
         result.Mod(r, n);
       }
 
@@ -99,17 +106,19 @@ namespace Prime
 
     void Shrink()
     {
-      for (auto i = m_coefficients.end() - 1; i > m_coefficients.begin(); --i)
+      for (auto i = m_coefficients.end() - 1; i >= m_coefficients.begin(); --i)
         if (!i->IsNull())
         {
           m_coefficients.erase(i + 1, m_coefficients.end());
-          break;
+          return;
         }
-      SetDegree(m_coefficients.size() - 1);
+
+      // Poly is empty
+      m_coefficients.clear();
     }
 
     void Mult(const typename std::vector<T>::iterator& aBegin, const typename std::vector<T>::iterator& aEnd,
-              const typename std::vector<T>::iterator& bBegin, const  typename std::vector<T>::iterator& bEnd,
+              const typename std::vector<T>::iterator& bBegin, const typename std::vector<T>::iterator& bEnd,
               const typename std::vector<T>::iterator& rBegin)
     {
       assert(aEnd - aBegin == bEnd - bBegin);

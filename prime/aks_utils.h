@@ -57,7 +57,7 @@ namespace Prime
 
         Num<T> result = n;
 
-        for (auto i = j.BitsNum() - 1; i >= 0; i--) {
+        for (auto i = j.BitsNum() - 1; i > 0; i--) {
             result = (result * result) % q;
             if (j.Bit(i) == true)
                 result = (result * n) % q;

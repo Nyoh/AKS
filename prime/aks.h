@@ -35,13 +35,12 @@ namespace Prime
           lhs.PowMod(value, r, value);  // lhs = (x + i)^r
 
           Polynomial<Num<T>> rhs;
-          lhs.SetDegree(1);
-          lhs[1] = Num<T>(1);
+          rhs.SetDegree(1);
+          rhs[1] = Num<T>(1);
           rhs.PowMod(value, r, value);  // lhs = x^r
 
-          assert(!(lhs[0] < i));
-          lhs[0] -= Num<T>(i);
-          lhs.Mod(r, value);
+          rhs[0] += Num<T>(i);
+          rhs.Mod(r, value);
 
           if (rhs != lhs)
             return false;
