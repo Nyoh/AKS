@@ -19,7 +19,8 @@ HEADERS +=\
     num64.h \
     polynomial.h \
     aks_utils.h \
-    utils.h
+    utils.h \
+    bignum.h
 
 unix {
     target.path = /usr/lib

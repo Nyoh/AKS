@@ -5,8 +5,11 @@
 #include <aks_utils.h>
 #include <polynomial.h>
 
+#include "tests.h"
+
 int main(int argc, char *argv[])
 {
+  TestBigNum();
   Prime::Num64 b = Prime::Num64(64);
 
   auto c = b.BitsNum();

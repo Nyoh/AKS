@@ -19,6 +19,13 @@ namespace Prime
   {
     return (m_num & (std::uint64_t(1) << index)) != 0;
   }
+
+  template <>
+  Num64& Num64::operator <<=(int shift)
+  {
+    m_num <<= shift;
+    return *this;
+  }
 }
 
 #endif // TESTNUM

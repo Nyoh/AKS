@@ -7,7 +7,8 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    test_bignum.cpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../prime/release/ -lprime
@@ -16,3 +17,6 @@ else:unix: LIBS += -L$$OUT_PWD/../prime/ -lprime
 
 INCLUDEPATH += $$PWD/../prime
 DEPENDPATH += $$PWD/../prime
+
+HEADERS += \
+    tests.h

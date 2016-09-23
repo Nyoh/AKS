@@ -5,7 +5,7 @@
 
 namespace Prime
 {
-  std::uint32_t HighestBit(std::uint64_t value)
+  inline std::uint32_t HighestBit(std::uint64_t value)
   {
     std::uint32_t result = 0;
     while (value >>= 1)
@@ -14,7 +14,7 @@ namespace Prime
     return result;
   }
 
-  std::uint64_t NextPowerOf2(std::uint64_t value)
+  inline std::uint64_t NextPowerOf2(std::uint64_t value)
   {
     std::uint64_t result = 1;
     result <<= HighestBit(value);

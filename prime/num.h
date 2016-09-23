@@ -26,6 +26,12 @@ namespace Prime
       return false;
     }
 
+    Num<T>& operator <<=(int /*shift*/)
+    {
+      static_assert(sizeof(T) == -1, "Implement in specialized class");
+      return *this;
+    }
+
     bool IsNull() const
     {
       return m_num == 0;
@@ -185,12 +191,6 @@ namespace Prime
     Num<T> operator >>(int shift) const
     {
       return Num<T>(*this) >>= shift;
-    }
-
-    Num<T>& operator <<=(int shift)
-    {
-      m_num <<= shift;
-      return *this;
     }
 
   private:
