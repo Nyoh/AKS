@@ -140,7 +140,6 @@ namespace Prime
                 if (alphaEnd - alphaBegin == 1)
                 {
                     *resultBegin += *alphaBegin * *betaBegin;
-                    return;
                 }
                 else if (alphaEnd - alphaBegin == 2)
                 {

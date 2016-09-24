@@ -1,7 +1,9 @@
 #ifndef BIGNUM
 #define BIGNUM
 
+#include <array>
 #include <cstring>
+#include <deque>
 #include <vector>
 
 #include "num.h"
@@ -13,26 +15,14 @@ namespace Prime
     {
         const static auto ChunkSizeBits = sizeof(std::uint32_t) * 8;
         const static auto ChunkSizeBytes = sizeof(std::uint32_t);
-        std::vector<std::uint32_t> data;
+        typedef std::vector<std::uint32_t> DataType;
+        DataType data;
 
         BigNumData() {}
 
         explicit BigNumData(std::uint32_t value)
             : data{value}
         {
-        }
-
-        void Shrink()
-        {
-            for (auto i = data.end() - 1; i >= data.begin(); --i)
-                if (*i)
-                {
-                    data.erase(i + 1, data.end());
-                    return;
-                }
-
-            // BigNum is empty
-            data.resize(1);
         }
 
         bool operator ==(const BigNumData& rhs) const
@@ -115,7 +105,106 @@ namespace Prime
             return result;
         }
 
+        BigNumData& operator *=(const BigNumData& value)
+        {
+            const size_t alignedSize = NextPowerOf2(std::max(data.size(), value.data.size()));
+            DataType rhs;
+            rhs.reserve(alignedSize);
+            rhs.assign(value.data.begin(), value.data.end());
+            rhs.resize(alignedSize);
+
+            data.resize(alignedSize);
+
+            DataType result;
+            result.resize(alignedSize * 2);
+
+            Mult(data.begin(), data.end(), rhs.begin(), rhs.end(), result.begin());
+
+            result.swap(data);
+            Shrink();
+            return *this;
+        }
+
+        BigNumData operator *(const BigNumData& value) const
+        {
+            const auto alignedSize = NextPowerOf2(std::max(data.size(), value.data.size()));
+
+            DataType rhs;
+            rhs.reserve(alignedSize);
+            rhs.assign(value.data.begin(), value.data.end());
+            rhs.resize(alignedSize);
+
+            DataType lhs;
+            lhs.reserve(alignedSize);
+            lhs.assign(data.begin(), data.end());
+            lhs.resize(alignedSize);
+
+            BigNumData result;
+            result.data.resize(alignedSize * 2);
+            Mult(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), result.data.begin());
+
+            result.Shrink();
+            return result;
+        }
+
     private:
+        static void Mult(const DataType::iterator& aBegin, const DataType::iterator& aEnd,
+                  const DataType::iterator& bBegin, const DataType::iterator& bEnd,
+                  const DataType::iterator& rBegin)
+        {
+            std::deque<std::array<DataType::iterator, 5>> queue;
+            queue.push_back({aBegin, aEnd, bBegin, bEnd, rBegin});
+
+            while (!queue.empty())
+            {
+                const auto& params = queue.front();
+                const auto& alphaBegin = params[0];
+                const auto& alphaEnd = params[1];
+                const auto& betaBegin = params[2];
+                const auto& betaEnd = params[3];
+                const auto& resultBegin = params[4];
+
+                assert(alphaEnd - alphaBegin == betaEnd - betaBegin);
+                if (alphaEnd - alphaBegin == 1)
+                {
+                    Add(static_cast<std::uint64_t>(*alphaBegin) * static_cast<std::uint64_t>(*betaBegin), resultBegin);
+                }
+                else if (alphaEnd - alphaBegin == 2)
+                {
+                    Add(static_cast<std::uint64_t>(*alphaBegin) * static_cast<std::uint64_t>(*betaBegin), resultBegin);
+
+                    Add(static_cast<std::uint64_t>(*(alphaBegin + 1)) * static_cast<std::uint64_t>(*betaBegin), resultBegin + 1);
+                    Add(static_cast<std::uint64_t>(*alphaBegin) * static_cast<std::uint64_t>(*(betaBegin + 1)), resultBegin + 1);
+
+                    Add(static_cast<std::uint64_t>(*(alphaBegin + 1)) * static_cast<std::uint64_t>(*(betaBegin + 1)), resultBegin + 2);
+                }
+                else
+                {
+                    const auto half = (alphaEnd - alphaBegin) / 2; // equal to (betaEnd - betaBegin) / 2
+
+                    queue.push_back({alphaBegin, alphaBegin + half, betaBegin, betaBegin + half, resultBegin}); //A0 + B0
+                    queue.push_back({alphaBegin, alphaBegin + half, betaBegin + half, betaEnd, resultBegin + half}); //A0 + B1
+                    queue.push_back({alphaBegin + half, alphaEnd, betaBegin, betaBegin + half, resultBegin + half}); //A1 + B0
+                    queue.push_back({alphaBegin + half, alphaEnd, betaBegin + half, betaEnd, resultBegin + half * 2}); //A1 + B1
+                }
+
+                queue.pop_front();
+            }
+        }
+
+        static void Add(std::uint64_t value, const DataType::iterator& place)
+        {
+            auto cPlace = place;
+            while (value)
+            {
+                value += *cPlace;
+                *cPlace = static_cast<std::uint32_t>(value);
+                value >>= ChunkSizeBits;
+
+                ++cPlace;
+            }
+        }
+
         static void Add(const BigNumData& a, const BigNumData& b, BigNumData& result)
         {
             result.data.reserve(std::max(a.data.size(), b.data.size()) + 1);
@@ -131,7 +220,7 @@ namespace Prime
                 if (i < small.data.size())
                     chunkSum += small.data[i];
 
-                if (i < result.data.size())
+                if (i >= result.data.size())
                     result.data.push_back(0);
 
                 if (over)
@@ -143,6 +232,19 @@ namespace Prime
             }
             if (over)
                 result.data.push_back(1);
+        }
+
+        void Shrink()
+        {
+            for (auto i = data.end() - 1; i >= data.begin(); --i)
+                if (*i)
+                {
+                    data.erase(i + 1, data.end());
+                    return;
+                }
+
+            // BigNum is empty
+            data.resize(1);
         }
     };
 

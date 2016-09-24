@@ -24,7 +24,7 @@ namespace
 
     bool TestSum()
     {
-        for (std::size_t i = 1; i <= 1024; i *= 2)
+        for (std::size_t i = 32; i <= 1024; i *= 2)
         {
             Prime::BigNum a = Prime::BigNum(i);
             a <<= i;
@@ -41,6 +41,9 @@ namespace
 bool TestBigNum()
 {
     if (!TestShift())
+        return false;
+
+    if (!TestSum())
         return false;
 
     return true;
