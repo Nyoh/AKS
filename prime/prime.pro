@@ -20,7 +20,8 @@ HEADERS +=\
     polynomial.h \
     aks_utils.h \
     utils.h \
-    bignum.h
+    bignum.h \
+    soe.h
 
 unix {
     target.path = /usr/lib
