@@ -10,14 +10,13 @@ namespace Prime
     class SoE
     {
         explicit SoE(const size_t size)
-            : m_sieve(CreateSieve(size))
+            : m_sieve(CreateSieve(size >= 3 ? size : 3))
         {
         }
 
         bool IsPrime(const std::uint64_t value)
         {
-
-            return true;
+            return !m_sieve[valie];
         }
 
     private:
@@ -25,10 +24,11 @@ namespace Prime
         {
             std::vector<bool> sieve;
             sieve.resize(size);
-
+            sieve[0] = true;
+            sieve[1] = true;
         }
 
-        const std::vector<bool> m_sieve;
+        const std::vector<bool> m_sieve; // false - prime, true - not
     };
 }
 
