@@ -11,18 +11,26 @@
 
 namespace Prime
 {
+    template <typename T>
     struct BigNumData
     {
-        const static auto ChunkSizeBits = sizeof(std::uint32_t) * 8;
-        const static auto ChunkSizeBytes = sizeof(std::uint32_t);
-        typedef std::vector<std::uint32_t> DataType;
+        static_assert(sizeof(T) * 2 <= sizeof(std::uint64_t), "");
+
+        const static auto ChunkSizeBits = sizeof(T) * 8;
+        const static auto ChunkSizeBytes = sizeof(T);
+        typedef std::vector<T> DataType;
         DataType data;
 
         BigNumData() {}
 
-        explicit BigNumData(std::uint32_t value)
-            : data{value}
+        explicit BigNumData(std::uint64_t value)
         {
+            data.reserve(sizeof(std::uint64_t) / sizeof(T));
+            while (value)
+            {
+                data.push_back(static_cast<T>(value));
+                value >>= ChunkSizeBits;
+            }
         }
 
         bool operator ==(const BigNumData& rhs) const
@@ -54,7 +62,7 @@ namespace Prime
             for (auto& chunk : data)
             {
                 temp = (static_cast<std::uint64_t>(chunk) << shift) | (temp >> ChunkSizeBits);
-                chunk = static_cast<std::uint32_t>(temp);
+                chunk = static_cast<T>(temp);
             }
 
             Shrink();
@@ -83,7 +91,7 @@ namespace Prime
             for (auto chunk = data.rbegin(); chunk != data.rend(); ++chunk)
             {
                 temp = (static_cast<std::uint64_t>(*chunk) << (ChunkSizeBits - shift));
-                *chunk = static_cast<std::uint32_t>(temp >> ChunkSizeBits);
+                *chunk = static_cast<T>(temp >> ChunkSizeBits);
                 temp >>= ChunkSizeBits;
             }
 
@@ -148,11 +156,11 @@ namespace Prime
         }
 
     private:
-        static void Mult(const DataType::iterator& aBegin, const DataType::iterator& aEnd,
-                  const DataType::iterator& bBegin, const DataType::iterator& bEnd,
-                  const DataType::iterator& rBegin)
+        static void Mult(const typename DataType::iterator& aBegin, const typename DataType::iterator& aEnd,
+                  const typename DataType::iterator& bBegin, const typename DataType::iterator& bEnd,
+                  const typename DataType::iterator& rBegin)
         {
-            std::deque<std::array<DataType::iterator, 5>> queue;
+            std::deque<std::array<typename DataType::iterator, 5>> queue;
             queue.push_back({aBegin, aEnd, bBegin, bEnd, rBegin});
 
             while (!queue.empty())
@@ -192,13 +200,13 @@ namespace Prime
             }
         }
 
-        static void Add(std::uint64_t value, const DataType::iterator& place)
+        static void Add(std::uint64_t value, const typename DataType::iterator& place)
         {
             auto cPlace = place;
             while (value)
             {
                 value += *cPlace;
-                *cPlace = static_cast<std::uint32_t>(value);
+                *cPlace = static_cast<T>(value);
                 value >>= ChunkSizeBits;
 
                 ++cPlace;
@@ -226,7 +234,7 @@ namespace Prime
                 if (over)
                     chunkSum++;
 
-                result.data[i] = static_cast<std::uint32_t>(chunkSum);
+                result.data[i] = static_cast<T>(chunkSum);
                 over = ((chunkSum >> ChunkSizeBits) != 0);
 
             }
@@ -248,7 +256,7 @@ namespace Prime
         }
     };
 
-    typedef Prime::Num<BigNumData> BigNum;
+    typedef Prime::Num<BigNumData<std::uint8_t>> BigNum;
 
     template <>
     std::uint32_t BigNum::BitsNum() const
