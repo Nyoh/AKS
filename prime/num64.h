@@ -19,6 +19,12 @@ namespace Prime
     {
         return (m_num & (std::uint64_t(1) << index)) != 0;
     }
+
+    template <>
+    bool Num64::IsOdd() const
+    {
+        return m_num % 2 == 1;
+    }
 }
 
 #endif // TESTNUM

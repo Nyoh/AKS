@@ -48,7 +48,7 @@ namespace Prime
 
     // Calculates n^j mod q
     template <typename T>
-    Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const std::uint64_t q)
+    Num<T> PowerMod(const Num<T>& n, const Num<T>& j, const Num<T>& q)
     {
         if (j == Num<T>(0))
             return Num<T>(1);
@@ -78,7 +78,7 @@ namespace Prime
             bool foundR = true;
             for (std::uint64_t j = 1; j <= log2Pow2; j++)
             {
-                if (PowerMod(value, Num<T>(j), r) == 1)
+                if (PowerMod(value, Num<T>(j), Num<T>(r)) == 1)
                 {
                     foundR = false;
                     break;

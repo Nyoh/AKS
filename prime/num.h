@@ -26,6 +26,12 @@ namespace Prime
             return false;
         }
 
+        bool IsOdd() const
+        {
+            static_assert(sizeof(T) == -1, "Implement in specialized class");
+            return false;
+        }
+
         bool IsNull() const
         {
             return m_num == 0;
@@ -34,11 +40,6 @@ namespace Prime
         void Swap(Num<T>& other)
         {
             std::swap(*this, other);
-        }
-
-        bool IsOdd() const
-        {
-            return m_num % 2 == 1;
         }
 
         Num ()
@@ -54,28 +55,6 @@ namespace Prime
             : m_num(static_cast<std::uint32_t>(value))
         {
             assert(value >= 0);
-        }
-
-        bool operator ==(int rhs) const
-        {
-            assert(rhs >= 0);
-            return m_num == static_cast<unsigned int>(rhs);
-        }
-
-        bool operator >(int rhs) const
-        {
-            assert(rhs >= 0);
-            return m_num > static_cast<unsigned int>(rhs);
-        }
-
-        bool operator <(const std::uint64_t rhs) const
-        {
-            return m_num < rhs;
-        }
-
-        Num<T> operator%(const std::uint64_t rhs) const
-        {
-            return Num<T>(m_num % rhs);
         }
 
         bool operator ==(const Num<T>& rhs) const
@@ -100,12 +79,42 @@ namespace Prime
 
         bool operator >(const Num<T>& rhs) const
         {
-            return rhs.m_num > m_num;
+            return m_num > rhs.m_num;
         }
 
         bool operator >=(const Num<T>& rhs) const
         {
-            return rhs.m_num >= m_num;
+            return m_num >= rhs.m_num;
+        }
+
+        bool operator ==(const std::uint64_t& rhs) const
+        {
+            return m_num == rhs;
+        }
+
+        bool operator !=(const std::uint64_t& rhs) const
+        {
+            return m_num != rhs;
+        }
+
+        bool operator <(const std::uint64_t& rhs) const
+        {
+            return m_num < rhs;
+        }
+
+        bool operator <=(const std::uint64_t& rhs) const
+        {
+            return m_num <= rhs;
+        }
+
+        bool operator >(const std::uint64_t& rhs) const
+        {
+            return m_num > rhs;
+        }
+
+        bool operator >=(const std::uint64_t& rhs) const
+        {
+            return m_num >= rhs;
         }
 
         Num<T>& operator++()
@@ -130,21 +139,21 @@ namespace Prime
             return *this;
         }
 
-        Num<T> operator-(const std::uint64_t rhs) const
-        {
-            assert(m_num > rhs);
-            return Num<T>(m_num - rhs);
-        }
-
         Num<T> operator-(const Num<T>& rhs) const
         {
-            assert(m_num > rhs.m_num);
+            assert(m_num >= rhs.m_num);
             return Num<T>(m_num - rhs.m_num);
+        }
+
+        Num<T> operator-(const std::uint64_t rhs) const
+        {
+            assert(m_num >= rhs);
+            return Num<T>(m_num - rhs);
         }
 
         Num<T>& operator -=(const Num<T>& rhs)
         {
-            assert(m_num > rhs.m_num);
+            assert(m_num >= rhs.m_num);
             m_num -= rhs.m_num;
             return *this;
         }

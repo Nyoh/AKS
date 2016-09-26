@@ -93,7 +93,6 @@ namespace Prime
                     *this *= *this;
 
                 power >>= 1; // divide by two
-                result.Mod(r, n);
             }
 
             result.m_coefficients.swap(m_coefficients);
