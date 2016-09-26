@@ -100,12 +100,12 @@ namespace Prime
 
         bool operator >(const Num<T>& rhs) const
         {
-            return rhs.m_num <= m_num;
+            return rhs.m_num > m_num;
         }
 
         bool operator >=(const Num<T>& rhs) const
         {
-            return rhs.m_num < m_num;
+            return rhs.m_num >= m_num;
         }
 
         Num<T>& operator++()

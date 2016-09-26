@@ -1,3 +1,4 @@
+#include <aks_utils.h>
 #include <bignum.h>
 
 #include "tests.h"
@@ -36,6 +37,36 @@ namespace
 
         return true;
     }
+
+    bool TestDivision()
+    {
+        for (std::size_t i = 32; i <= 1024; i *= 2)
+        {
+            Prime::BigNumData<std::uint32_t> a = Prime::BigNumData<std::uint32_t>(i);
+            a <<= i;
+            const auto prod = a * a;
+            const auto div = prod / a;
+            if (div != a)
+                return false;
+        }
+
+        return true;
+    }
+
+    bool TestMod()
+    {
+        for (std::size_t i = 17; i <= 100; i++)
+        {
+            Prime::BigNum a = Prime::Pow(Prime::BigNum(i), i);
+            a += Prime::BigNum(i - 1);
+
+            const auto mod = a % Prime::BigNum(i);
+            if (mod != Prime::BigNum(i - 1))
+                return false;
+        }
+
+        return true;
+    }
 }
 
 bool TestBigNum()
@@ -44,6 +75,12 @@ bool TestBigNum()
         return false;
 
     if (!TestSum())
+        return false;
+
+    if (!TestDivision())
+        return false;
+
+    if (!TestMod())
         return false;
 
     return true;

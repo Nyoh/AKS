@@ -5,6 +5,7 @@
 #include <cstring>
 #include <deque>
 #include <vector>
+#include <utility>
 
 #include "num.h"
 #include "utils.h"
@@ -21,16 +22,18 @@ namespace Prime
         typedef std::vector<T> DataType;
         DataType data;
 
-        BigNumData() {}
+        BigNumData()
+            : data{0}
+        {}
 
         explicit BigNumData(std::uint64_t value)
         {
             data.reserve(sizeof(std::uint64_t) / sizeof(T));
-            while (value)
+            do
             {
                 data.push_back(static_cast<T>(value));
                 value >>= ChunkSizeBits;
-            }
+            } while (value);
         }
 
         bool operator ==(const BigNumData& rhs) const
@@ -87,12 +90,13 @@ namespace Prime
             if (!shift)
                 return *this;
 
-            std::uint64_t temp = 0;
+            T tail = 0;
             for (auto chunk = data.rbegin(); chunk != data.rend(); ++chunk)
             {
-                temp = (static_cast<std::uint64_t>(*chunk) << (ChunkSizeBits - shift));
-                *chunk = static_cast<T>(temp >> ChunkSizeBits);
-                temp >>= ChunkSizeBits;
+                T temp = tail << (ChunkSizeBits - shift);
+                temp |= (*chunk >> shift);
+                tail = *chunk;
+                *chunk = temp;
             }
 
             Shrink();
@@ -155,7 +159,147 @@ namespace Prime
             return result;
         }
 
+        BigNumData& operator /=(const BigNumData& value)
+        {
+            Div(value);
+            return *this;
+        }
+
+        BigNumData operator /(const BigNumData& value) const
+        {
+            BigNumData result = *this;
+            result /= value;
+            return result;
+        }
+
+        BigNumData& operator %=(const BigNumData& value)
+        {
+            *this = Div(value);
+            return *this;
+        }
+
+        BigNumData operator %(const BigNumData& value) const
+        {
+            BigNumData result = *this;
+            return result.Div(value);
+        }
+
+        bool operator <(const BigNumData& rhs) const
+        {
+            if (data.size() < rhs.data.size())
+                return true;
+            else if (data.size() > rhs.data.size())
+                return false;
+            else
+            {
+                for (auto i = data.size() - 1; i >= 0; i--)
+                {
+                    if (data[i] < rhs.data[i])
+                        return true;
+                    else if (data[i] > rhs.data[i])
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        bool operator <=(const BigNumData& rhs) const
+        {
+            if (data.size() < rhs.data.size())
+                return true;
+            else if (data.size() > rhs.data.size())
+                return false;
+            else
+            {
+                for (auto i = data.size() - 1; i >= 0; i++)
+                {
+                    if (data[i] < rhs.data[i])
+                        return true;
+                    else if (data[i] > rhs.data[i])
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        bool operator >(const BigNumData& rhs) const
+        {
+            return rhs <= *this;
+        }
+
+        bool operator >=(const BigNumData& rhs) const
+        {
+            return rhs < *this;
+        }
+
+        std::uint32_t BitsNum() const
+        {
+            return (data.size() - 1) * ChunkSizeBits + HighestBit(data.back());
+        }
+
     private:
+        // Divides and returns the remainder
+        BigNumData Div(const BigNumData& value)
+        {
+            if (value.data.size() == 1 && value.data[0] == 0)
+                throw std::overflow_error("Division by zero.");
+
+            if (*this < value)
+            {
+                BigNumData result = *this;
+                data.resize(1);
+                data[0] = 0;
+                return result;
+            }
+
+            BigNumData result;
+            BigNumData divisor = value;
+
+            std::int64_t power = BitsNum() - value.BitsNum();
+            divisor <<= power;
+            while (power >= 0)
+            {
+                result <<= 1;
+                if (*this >= divisor)
+                {
+                    if (power == 61)
+                    {
+                        assert(power == 61);
+                    }
+
+                    Sub(divisor);
+                    result.data[0] |= 0x1;
+                }
+                divisor >>= 1;
+                power--;
+            }
+
+            result.data.swap(data);
+
+            return result;
+        }
+
+        void Sub(const BigNumData& value)
+        {
+            assert(*this >= value);
+            bool over = false;
+            for (size_t i = 0; i != value.data.size(); i++)
+            {
+                if (over)
+                {
+                    if (data[i] > 0)
+                        over = false;
+                    data[i]--;
+                }
+                if (data[i] < value.data[i])
+                    over = true;
+                data[i] -= value.data[i];
+            }
+            if (over)
+                data[value.data.size()]--;
+            Shrink();
+        }
+
         static void Mult(const typename DataType::iterator& aBegin, const typename DataType::iterator& aEnd,
                   const typename DataType::iterator& bBegin, const typename DataType::iterator& bEnd,
                   const typename DataType::iterator& rBegin)
@@ -216,7 +360,7 @@ namespace Prime
         static void Add(const BigNumData& a, const BigNumData& b, BigNumData& result)
         {
             result.data.reserve(std::max(a.data.size(), b.data.size()) + 1);
-            result.data.resize(result.data.capacity() - 1);
+            result.data.resize(std::max(a.data.size(), b.data.size()));
 
             const BigNumData& big = (a.data.size() > b.data.size() ? a : b);
             const BigNumData& small = (a.data.size() > b.data.size() ? b : a);
@@ -256,12 +400,12 @@ namespace Prime
         }
     };
 
-    typedef Prime::Num<BigNumData<std::uint8_t>> BigNum;
+    typedef Prime::Num<BigNumData<std::uint32_t>> BigNum;
 
     template <>
     std::uint32_t BigNum::BitsNum() const
     {
-        return (m_num.data.size() - 1) * m_num.ChunkSizeBits + HighestBit(m_num.data.back());
+        return m_num.BitsNum();
     }
 
     template <>
