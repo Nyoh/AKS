@@ -3,6 +3,7 @@
 #include <aks.h>
 #include <bignum.h>
 #include <num64.h>
+#include <soe.h>
 
 #include "tests.h"
 
@@ -10,8 +11,17 @@ int main(int argc, char *argv[])
 {
     TestBigNum();
 
-    for (int i = 5; i < 30; i++)
-        std::cout << i << " " << IsPrimeAKS(Prime::BigNum(i)) << std::endl;
+    const unsigned num = 100;
+
+    Prime::SoE soe = Prime::SoE(num);
+    for (int i = 5; i < num; i++)
+    {
+        bool aksR = IsPrimeAKS(Prime::BigNum(i));
+        bool soeR = soe.IsPrime(i);
+
+        std::cout << i << " " << aksR << ' ' << soeR << ' ' << (aksR == soeR ? 'V' : 'X') << std::endl;
+
+    }
 
     return 0;
 }
