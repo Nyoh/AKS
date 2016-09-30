@@ -6,22 +6,6 @@
 namespace Prime
 {
     template <typename T>
-    Num<T> Pow(const Num<T>& base, std::uint64_t power)
-    {
-        Num<T> result = Num<T>(1);
-        while (power)
-        {
-            if (power % 2)
-                result *= base;
-
-            result *= result;
-            power /= 2; // divide by two
-        }
-
-        return result;
-    }
-
-    template <typename T>
     bool IsPerfectPower(const Num<T>& value)
     {
         Num<T> upperBound = value;
@@ -32,7 +16,7 @@ namespace Prime
             while (upperBound >= lowerBound)
             {
                 const Num<T> candidateBase = (lowerBound + upperBound) >> 1; // Shifting is to divide by two
-                const Num<T> candidate = Pow(candidateBase, i + 1);
+                const Num<T> candidate = Num<T>::Pow(candidateBase, i + 1);
                 if (value == candidate)
                     return true;
 

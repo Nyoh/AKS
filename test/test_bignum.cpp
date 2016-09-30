@@ -57,7 +57,7 @@ namespace
     {
         for (std::size_t i = 17; i <= 100; i++)
         {
-            Prime::BigNum a = Prime::Pow(Prime::BigNum(i), i);
+            Prime::BigNum a = Prime::BigNum::Pow(Prime::BigNum(i), i);
             a += Prime::BigNum(i - 1);
 
             const auto mod = a % Prime::BigNum(i);

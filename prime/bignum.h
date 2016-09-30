@@ -517,6 +517,21 @@ namespace Prime
     {
         return m_num.data[0] % 2 == 1;
     }
+
+    template <>
+    inline BigNum BigNum::SquareRoot() const
+    {
+        BigNum x = BigNum(2);
+        x = BigNum::Pow(x, m_num.BitsNum() / 2);
+        while (true)
+        {
+            BigNum y = (x + *this / x) >> 1;
+            if (y >= x)
+                return x;
+
+            x.m_num.data.swap(y.m_num.data);
+        }
+    }
 }
 
 #endif // BIGNUM

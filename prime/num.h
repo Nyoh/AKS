@@ -32,6 +32,12 @@ namespace Prime
             return false;
         }
 
+        Num<T> SquareRoot() const
+        {
+            static_assert(sizeof(T) == -1, "Implement in specialized class");
+            return Num<T>();
+        }
+
         bool IsNull() const
         {
             return m_num == 0;
@@ -40,6 +46,21 @@ namespace Prime
         void Swap(Num<T>& other)
         {
             std::swap(*this, other);
+        }
+
+        static Num<T> Pow(const Num<T>& base, std::uint64_t power)
+        {
+            Num<T> result = Num<T>(1);
+            while (power)
+            {
+                if (power % 2)
+                    result *= base;
+
+                result *= result;
+                power /= 2;
+            }
+
+            return result;
         }
 
         Num ()
@@ -166,6 +187,17 @@ namespace Prime
         Num<T>& operator *=(const Num<T>& rhs)
         {
             m_num *= rhs.m_num;
+            return *this;
+        }
+
+        Num<T> operator/(const Num<T>& rhs) const
+        {
+            return Num<T>(m_num / rhs.m_num);
+        }
+
+        Num<T>& operator /=(const Num<T>& rhs)
+        {
+            m_num /= rhs.m_num;
             return *this;
         }
 
