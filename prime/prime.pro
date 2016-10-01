@@ -21,7 +21,8 @@ HEADERS +=\
     aks_utils.h \
     utils.h \
     bignum.h \
-    soe.h
+    soe.h \
+    trial_division.h
 
 unix {
     target.path = /usr/lib
