@@ -50,9 +50,9 @@ namespace Prime
             return *this;
         }
 
-        bool operator !=(Polynomial<T>& rhs)
+        bool operator ==(Polynomial<T>& rhs)
         {
-            return m_coefficients != rhs.m_coefficients;
+            return m_coefficients == rhs.m_coefficients;
         }
 
         // Mod the polynomial by x^r - 1, n
