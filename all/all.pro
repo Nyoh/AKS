@@ -2,4 +2,4 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     ../prime \
-    ../test
+    ../speed_test

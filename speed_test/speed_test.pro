@@ -1,7 +1,7 @@
 QT += core
 QT -= gui
 
-TARGET = test
+TARGET = speed_test
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG += c++11
