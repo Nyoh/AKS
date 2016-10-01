@@ -1,6 +1,9 @@
 #ifndef TRIAL_DIVISION_H
 #define TRIAL_DIVISION_H
 
+#include <deque>
+#include <future>
+
 namespace Prime
 {
     template <typename T>
@@ -10,12 +13,26 @@ namespace Prime
         if (value < 4) return true;
         if (value.Bit(0) == false) return false; // Even number
 
+        std::deque<std::future<bool>> futures;
+        const size_t threadsNum = std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() : 4;
         const limit = value.SquareRoot();
-        for (Num<T> i = Num<T>(2); i != limit; ++i)
+        for (Num<T> i = Num<T>(3); i <= limit; i += 2)
         {
-            if (value % i == 0)
-                return false;
+            if (futures.size() == threadsNum)
+            {
+                if (futures.front().get())
+                    return false;
+                futures.pop_front();
+            }
+
+            futures.push_back(std::async(std::launch::async, [i, &value](){
+                return (value % i == 0);
+            }));
         }
+
+        for (auto& future : futures)
+            if (future.get())
+                return false;
 
         return true;
     }
