@@ -14,7 +14,7 @@ namespace Prime
     {
         if (value < 2) return false;
         if (value < 4) return true;
-        if (value.Bit(0) == false) return false; // Even number
+        if (!value.IsOdd()) return false;
 
         if (IsPerfectPower(value))
             return false;

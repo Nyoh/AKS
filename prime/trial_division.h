@@ -11,7 +11,7 @@ namespace Prime
     {
         if (value < 2) return false;
         if (value < 4) return true;
-        if (value.Bit(0) == false) return false; // Even number
+        if (!value.IsOdd()) return false;
 
         std::deque<std::future<bool>> futures;
         const size_t threadsNum = std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() : 4;

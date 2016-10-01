@@ -2,7 +2,6 @@
 
 #include <aks.h>
 #include <bignum.h>
-#include <num64.h>
 #include <soe.h>
 
 #include "tests.h"
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
     const unsigned num = 100;
 
     Prime::SoE soe = Prime::SoE(num);
-    for (int i = 5; i < num; i++)
+    for (int i = 1; i < num; i++)
     {
         bool aksR = IsPrimeAKS(Prime::BigNum(i));
         bool soeR = soe.IsPrime(i);
