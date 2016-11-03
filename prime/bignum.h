@@ -486,14 +486,13 @@ namespace Prime
 
         void Shrink()
         {
-            for (auto i = data.end() - 1; i >= data.begin(); --i)
+            for (auto i = data.end() - 1; i > data.begin(); --i)
                 if (*i)
                 {
                     data.erase(i + 1, data.end());
                     return;
                 }
 
-            // BigNum is empty
             data.resize(1);
         }
     };

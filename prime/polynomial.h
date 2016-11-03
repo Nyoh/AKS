@@ -108,15 +108,20 @@ namespace Prime
 
         void Shrink()
         {
-            for (auto i = m_coefficients.end() - 1; i >= m_coefficients.begin(); --i)
+            if (m_coefficients.empty())
+                return;
+
+            for (auto i = m_coefficients.end() - 1; i > m_coefficients.begin(); --i)
                 if (!i->IsNull())
                 {
                     m_coefficients.erase(i + 1, m_coefficients.end());
                     return;
                 }
 
-            // Poly is empty
-            m_coefficients.clear();
+            if (m_coefficients.begin()->IsNull())
+                m_coefficients.clear();
+            else
+                m_coefficients.resize(1);
         }
 
         void Mult(const typename std::vector<T>::iterator& aBegin, const typename std::vector<T>::iterator& aEnd,
