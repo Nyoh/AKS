@@ -11,10 +11,10 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    resources.cpp
+    utils.cpp
 
 HEADERS += \
-    resources.h
+    utils.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

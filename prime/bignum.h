@@ -320,6 +320,19 @@ namespace Prime
             return (data.size() - 1) * ChunkSizeBits() + HighestBit(data.back());
         }
 
+        std::string ToString() const
+        {
+            std::string invResult;
+            invResult.reserve(data.size() * 10);
+            BigNumData val = *this;
+            BigNumData ten(10);
+
+            while (val != 0)
+                invResult += ('0' + static_cast<char>(*val.Div(ten).data.begin()));
+
+            return std::string(invResult.rbegin(), invResult.rend());
+        }
+
     private:
         bool GetUint64(std::uint64_t& value) const
         {
@@ -360,11 +373,6 @@ namespace Prime
                 result <<= 1;
                 if (*this >= divisor)
                 {
-                    if (power == 61)
-                    {
-                        assert(power == 61);
-                    }
-
                     Sub(divisor);
                     result.data[0] |= 0x1;
                 }
@@ -530,6 +538,12 @@ namespace Prime
 
             x.m_num.data.swap(y.m_num.data);
         }
+    }
+
+    template <>
+    inline std::string BigNum::ToString() const
+    {
+        return m_num.ToString();
     }
 }
 

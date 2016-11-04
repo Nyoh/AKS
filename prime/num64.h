@@ -31,6 +31,12 @@ namespace Prime
     {
         return Num64(std::sqrt(m_num));
     }
+
+    template <>
+    inline std::string Num64::ToString() const
+    {
+        return std::to_string(m_num);
+    }
 }
 
 #endif // TESTNUM

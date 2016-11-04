@@ -1,8 +1,11 @@
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#ifndef TEST_UTILS_H
+#define TEST_UTILS_H
 
+#include <atomic>
 #include <chrono>
 #include <functional>
+
+#include "../prime/bignum.h"
 
 namespace Prime
 {
@@ -13,6 +16,7 @@ namespace Prime
     };
 
     bool TestResources(const std::function<bool()>& function, ResourcesInfo& info);
+    void Test(const std::function<bool(const BigNum&)>& function, const std::string& methodName, const std::atomic<bool>& stop);
 }
 
-#endif // RESOURCES_H
+#endif // TEST_UTILS_H

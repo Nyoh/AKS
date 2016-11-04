@@ -34,3 +34,5 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../test
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tests/release/tests.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tests/debug/tests.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../tests/libtests.a
+
+LIBS += -lpsapi

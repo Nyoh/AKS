@@ -4,7 +4,7 @@
 #include <bignum.h>
 #include <soe.h>
 
-#include "resources.h"
+#include "../tests/utils.h"
 #include "tests.h"
 
 int main(int argc, char *argv[])
@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
     TestBigNum();
 
     Prime::ResourcesInfo info;
-    //std::function<bool()> checkMemFun(Prime::IsPrimeAKS<std::uint32_t>, Prime::BigNum(100));
     bool a = Prime::TestResources([](){return Prime::IsPrimeAKS(Prime::BigNum(17));}, info);
 
     const unsigned num = 100;

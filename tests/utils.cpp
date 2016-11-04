@@ -3,11 +3,11 @@
 #include "psapi.h"
 #endif
 
-#include <atomic>
 #include <future>
+#include <iostream>
 #include <thread>
 
-#include "resources.h"
+#include "utils.h"
 
 namespace
 {
@@ -36,6 +36,20 @@ namespace
 
         return maxMemory - startMemory;
     }
+
+    class Printer
+    {
+    public:
+        explicit Printer(const std::string& methodName)
+        {
+            Print("Testing method: " + methodName + ", Is Prime, Time, Memory\n");
+        }
+
+        void Print(const std::string& text)
+        {
+            std::cout << text;
+        }
+    };
 }
 
 namespace Prime
@@ -54,5 +68,21 @@ namespace Prime
         info.memory = memUsed.get();
 
         return result;
+    }
+
+    void Test(const std::function<bool (const BigNum &)> &function, const std::string &methodName, const std::atomic<bool> &stop)
+    {
+        Printer printer(methodName);
+        BigNum number(1);
+        while(!stop)
+        {
+            printer.Print(number.ToString() + ", ");
+
+            Prime::ResourcesInfo info;
+            const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
+            printer.Print(std::to_string(result) + ", " + std::to_string(info.time) + ", " + std::to_string(info.memory));
+
+            ++number;
+        }
     }
 }

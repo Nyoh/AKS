@@ -38,6 +38,12 @@ namespace Prime
             return Num<T>();
         }
 
+        std::string ToString() const
+        {
+            static_assert(sizeof(T) == -1, "Implement in specialized class");
+            return std::string();
+        }
+
         bool IsNull() const
         {
             return m_num == 0;
