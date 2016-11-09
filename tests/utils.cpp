@@ -37,6 +37,34 @@ namespace
         return maxMemory - startMemory;
     }
 
+    void PartNumber(std::string& text, std::int64_t& num, unsigned base, unsigned size)
+    {
+        if (!num)
+            return;
+
+        int value = num % base;
+        num /= base;
+
+        std::string valueString = std::to_string(value);
+        if (size > valueString.size())
+            valueString = std::string(size - valueString.size(), '0') + valueString + ':';
+        text = valueString + text;
+    }
+
+    std::string ToString(const std::chrono::milliseconds& duration)
+    {
+        std::int64_t num = duration.count();
+        std::string result;
+        PartNumber(result, num, 1000, 3);
+        PartNumber(result, num, 60, 2);
+        PartNumber(result, num, 60, 2);
+        PartNumber(result, num, 24, 2);
+        if (num)
+            result = std::to_string(num) + ':' + result;
+
+        return result;
+    }
+
     class Printer
     {
     public:
@@ -80,7 +108,7 @@ namespace Prime
 
             Prime::ResourcesInfo info;
             const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
-            printer.Print(std::to_string(result) + ", " + std::to_string(info.time) + ", " + std::to_string(info.memory));
+            printer.Print(std::to_string(result) + ", " + ToString(info.time) + ", " + std::to_string(info.memory));
 
             ++number;
         }
