@@ -9,6 +9,9 @@
 
 int main(int argc, char *argv[])
 {
+    std::atomic<bool> stop{false};
+    Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop);
+
     TestBigNum();
 
     Prime::ResourcesInfo info;
