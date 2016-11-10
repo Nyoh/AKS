@@ -37,6 +37,16 @@ namespace Prime
     {
         return std::to_string(m_num);
     }
+
+    template <>
+    inline Num64 Num64::Random(const Num64& low, const Num64& high)
+    {
+        static std::random_device random_device;
+        static std::mt19937 random_generator(random_device());
+
+        std::uniform_int_distribution<> distribution(low.m_num, high.m_num);
+        return Num64(distribution(random_generator));
+    }
 }
 
 #endif // TESTNUM

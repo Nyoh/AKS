@@ -2,6 +2,7 @@
 #define MILLER_RABIN_H
 
 #include "num.h"
+#include "utils.h"
 
 namespace Prime
 {
@@ -23,9 +24,26 @@ namespace Prime
 
         for (std::uint32_t round = 0; round != rounds; round++)
         {
+            Num<T> a = Num<T>::Random(Num<T>(2), value - 2);
+            Num<T> X = PowerMod(a, t, value);
+            if (X == 1 || X == value - 1)
+                continue;
 
+            bool continueRoundLoop = false;
+            for (std::uint64_t sRound = 1; sRound != S; sRound++)
+            {
+                X = PowerMod(X, 2, value);
+                if (X == 1)
+                    return true;
+                else if (X == value - 1)
+                {
+                    continueRoundLoop = true;
+                    break;
+                }
+            }
+            if (!continueRoundLoop)
+                return false;
         }
-
 
         return true;
     }

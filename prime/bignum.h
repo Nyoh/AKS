@@ -334,6 +334,38 @@ namespace Prime
             return std::string(invResult.rbegin(), invResult.rend());
         }
 
+        static BigNumData Random(const BigNumData& low, const BigNumData& high)
+        {
+            assert(low <= high);
+
+            static std::random_device random_device;
+            static std::mt19937 random_generator(random_device());
+
+            BigNumData result = high - low;
+            std::uniform_int_distribution<> distribution(0, result.data.back());
+            result.data.back() = distribution(random_generator);
+
+            bool uppLimit = true;
+            for (auto i = result.data.rbegin(); i != result.data.rend(); i++)
+            {
+                T value = 0;
+                if (uppLimit)
+                {
+                    std::uniform_int_distribution<> distribution(0, *i);
+                    value = distribution(random_generator);
+                    if (value < *i)
+                        uppLimit = false;
+                }
+                else
+                    value = random_generator();
+
+
+                *i = value;
+            }
+
+            return result + low;
+        }
+
     private:
         bool GetUint64(std::uint64_t& value) const
         {
@@ -550,11 +582,7 @@ namespace Prime
     template <>
     inline BigNum BigNum::Random(const BigNum& low, const BigNum& high)
     {
-        std::random_device random_device;
-        std::mt19937 random_generator(random_device());
-        std::uniform_int_distribution<> distribution(1, 6);
-
-        return BigNum();
+        return BigNum(decltype(BigNum::m_num)::Random(low.m_num, high.m_num));
     }
 }
 
