@@ -10,9 +10,6 @@ TARGET = prime
 TEMPLATE = lib
 CONFIG += staticlib c++11
 
-SOURCES += \
-    utils.cpp
-
 HEADERS +=\
     aks.h \
     num.h \
