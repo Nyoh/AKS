@@ -44,6 +44,12 @@ namespace Prime
             return std::string();
         }
 
+        static Num<T> Random(const Num<T>& low, const Num<T>& high)
+        {
+            static_assert(sizeof(T) == -1, "Implement in specialized class");
+            return Num<T>();
+        }
+
         bool IsNull() const
         {
             return m_num == 0;

@@ -4,6 +4,7 @@
 #include <array>
 #include <cstring>
 #include <deque>
+#include <random>
 #include <vector>
 #include <utility>
 
@@ -544,6 +545,16 @@ namespace Prime
     inline std::string BigNum::ToString() const
     {
         return m_num.ToString();
+    }
+
+    template <>
+    inline BigNum BigNum::Random(const BigNum& low, const BigNum& high)
+    {
+        std::random_device random_device;
+        std::mt19937 random_generator(random_device());
+        std::uniform_int_distribution<> distribution(1, 6);
+
+        return BigNum();
     }
 }
 

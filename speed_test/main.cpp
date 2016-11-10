@@ -2,6 +2,7 @@
 
 #include <aks.h>
 #include <bignum.h>
+#include <miller_rabin.h>
 #include <soe.h>
 
 #include "../tests/utils.h"
@@ -13,7 +14,7 @@ int main(int argc, char *argv[])
 
     std::atomic<bool> stop{false};
     std::thread thread([&stop](){
-        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop);}
+        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "AKS", stop);}
     );
 
     std::cin.ignore();

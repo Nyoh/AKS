@@ -19,7 +19,8 @@ HEADERS +=\
     utils.h \
     bignum.h \
     soe.h \
-    trial_division.h
+    trial_division.h \
+    miller_rabin.h
 
 unix {
     target.path = /usr/lib
