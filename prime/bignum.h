@@ -375,8 +375,8 @@ namespace Prime
             value = 0;
             for (auto it = data.rbegin(); it != data.rend(); ++it)
             {
-                value |= *it;
                 value <<= ChunkSizeBits();
+                value |= *it;
             }
 
             return true;

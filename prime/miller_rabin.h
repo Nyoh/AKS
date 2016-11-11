@@ -16,7 +16,7 @@ namespace Prime
         if (!rounds)
             rounds = value.BitsNum();
 
-        std::uint64_t S = 0;
+        std::int64_t S = 0;
         while (value.Bit(S) == false)
             S++;
 
@@ -30,9 +30,9 @@ namespace Prime
                 continue;
 
             bool continueRoundLoop = false;
-            for (std::uint64_t sRound = 1; sRound != S; sRound++)
+            for (std::int64_t sRound = 1; sRound < S; sRound++)
             {
-                X = PowerMod(X, 2, value);
+                X = PowerMod(X, Num<T>(2), value);
                 if (X == 1)
                     return true;
                 else if (X == value - 1)

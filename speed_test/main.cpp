@@ -8,14 +8,14 @@
 #include "../tests/utils.h"
 #include "tests.h"
 
-int main(int argc, char *argv[])
+int main(int, char *[])
 {
     TestBigNum();
 
     std::atomic<bool> stop{false};
     std::thread thread([&stop](){
         Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "AKS", stop);
-        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop);
+        //Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop);
     });
 
     std::cin.ignore();
