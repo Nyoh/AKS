@@ -548,6 +548,26 @@ namespace Prime
     }
 
     template <>
+    bool BigNum::FromString(const std::string& string)
+    {
+        for (auto i = string.begin(); i != string.end(); ++i)
+            if (*i < '0' || *i > '9')
+                return false;
+
+        BigNum result;
+        BigNum adder;
+        for (auto i = string.begin(); i != string.end(); ++i)
+        {
+            result *= 10;
+            adder.m_num.data.front() = *i;
+            result += adder;
+        }
+
+        result.m_num.data.swap(m_num.data);
+        return true;
+    }
+
+    template <>
     inline BigNum BigNum::Random(const BigNum& low, const BigNum& high)
     {
         std::random_device random_device;

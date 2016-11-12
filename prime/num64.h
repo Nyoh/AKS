@@ -37,6 +37,20 @@ namespace Prime
     {
         return std::to_string(m_num);
     }
+
+    template <>
+    inline bool Num64::FromString(const std::string& string)
+    {
+        try
+        {
+            m_num = std::stoul(string);
+            return true;
+        }
+        catch(const std::logic_error& err)
+        {
+            return false;
+        }
+    }
 }
 
 #endif // TESTNUM
