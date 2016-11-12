@@ -15,8 +15,8 @@ namespace Prime
 
         std::deque<std::future<bool>> futures;
         const size_t threadsNum = std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() : 4;
-        const limit = value.SquareRoot();
-        for (Num<T> i = Num<T>(3); i <= limit; i += 2)
+        const auto limit = value.SquareRoot();
+        for (Num<T> i = Num<T>(3); i <= limit; i = i + 2)
         {
             if (futures.size() == threadsNum)
             {

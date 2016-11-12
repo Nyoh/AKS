@@ -107,9 +107,12 @@ namespace Prime
     std::function<BigNum()> CreateIntrementalFeeder(const BigNum& startPoint)
     {
         std::shared_ptr<BigNum> num = std::make_shared<BigNum>(startPoint);
+        if (!num->IsOdd())
+            ++(*num);
+
         return std::function<BigNum()>([num](){
             BigNum result = *num;
-            ++(*num);
+            *num = *num + 2;
             return result;
         });
     }

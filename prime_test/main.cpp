@@ -6,6 +6,7 @@
 #include <bignum.h>
 #include <miller_rabin.h>
 #include <soe.h>
+#include <trial_division.h>
 
 #include "utils.h"
 #include "tests.h"
@@ -48,6 +49,45 @@ namespace
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
+
+    void TestAKS()
+    {
+        std::atomic<bool> stop{false};
+        std::thread thread([&stop](){
+            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop, Prime::CreateIntrementalFeeder());}
+        );
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
+    }
+
+    void TestMillerRabin()
+    {
+        std::atomic<bool> stop{false};
+        std::thread thread([&stop](){
+            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "Miller-Rabin", stop, Prime::CreateIntrementalFeeder());}
+        );
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
+    }
+
+    void TestTrialDivision()
+    {
+        std::atomic<bool> stop{false};
+        std::thread thread([&stop](){
+            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeTrialDivision(num);}, "Trial Division", stop, Prime::CreateIntrementalFeeder());}
+        );
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
+    }
 }
 
 
@@ -56,19 +96,11 @@ int main(int argc, char *argv[])
     //TestBigNum();
 
     std::vector<std::pair<std::string, std::function<void()>>> menuOptions;
-    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Quit", [](){std::exit(0);}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test AKS", [](){TestAKS();}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test Miller-Rabin", [](){TestMillerRabin();}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Trial Division", [](){TestTrialDivision();}));
 
     Menu("Main menu", menuOptions);
-
-    std::atomic<bool> stop{false};
-    std::thread thread([&stop](){
-        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "AKS", stop, Prime::CreateIntrementalFeeder());}
-    );
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    stop = true;
-    if (thread.joinable())
-        thread.join();
 
     return 0;
 }
