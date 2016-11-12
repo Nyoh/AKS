@@ -10,6 +10,8 @@ SOURCES += main.cpp \
 INCLUDEPATH += $$PWD/../prime
 DEPENDPATH += $$PWD/../prime
 
+LIBS += -lpsapi
+
 HEADERS += \
     tests.h \
     utils.h

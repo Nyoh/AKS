@@ -1,10 +1,13 @@
 #ifdef _WIN32
+#define NOMINMAX
 #include "windows.h"
 #include "psapi.h"
 #endif
 
 #include <future>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <thread>
 
 #include "utils.h"
@@ -37,10 +40,22 @@ namespace
         return maxMemory - startMemory;
     }
 
+    std::string GetFreeFileName(const std::string& name, const std::string& extention)
+    {
+        for(unsigned num = 1;; num++)
+        {
+            const std::string candidate = name + std::to_string(num) + extention;
+            std::ifstream f(candidate.c_str());
+            if (!f.good())
+                return candidate;
+        }
+    }
+
     class Printer
     {
     public:
         explicit Printer(const std::string& methodName)
+            : file(GetFreeFileName(methodName + '_', ".csv"), std::ofstream::out)
         {
             Print("Testing method: " + methodName + ", Is Prime, Time, Memory\n");
         }
@@ -48,7 +63,12 @@ namespace
         void Print(const std::string& text)
         {
             std::cout << text;
+            file << text;
+            file.flush();
         }
+
+    private:
+        std::ofstream file;
     };
 }
 
