@@ -47,6 +47,20 @@ namespace Prime
         std::uniform_int_distribution<> distribution(low.m_num, high.m_num);
         return Num64(distribution(random_generator));
     }
+
+    template <>
+    inline bool Num64::FromString(const std::string& string)
+    {
+        try
+        {
+            m_num = std::stoul(string);
+            return true;
+        }
+        catch(const std::logic_error& err)
+        {
+            return false;
+        }
+    }
 }
 
 #endif // TESTNUM

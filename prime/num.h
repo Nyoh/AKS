@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <cstdint>
+#include <string>
 
 namespace Prime
 {
@@ -48,6 +49,12 @@ namespace Prime
         {
             static_assert(sizeof(T) == -1, "Implement in specialized class");
             return Num<T>();
+        }
+
+        bool FromString(const std::string& string)
+        {
+            static_assert(sizeof(T) == -1, "Implement in specialized class");
+            return std::string();
         }
 
         bool IsNull() const

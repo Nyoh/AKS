@@ -1,10 +1,13 @@
 #ifdef _WIN32
+#define NOMINMAX
 #include "windows.h"
 #include "psapi.h"
 #endif
 
 #include <future>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <thread>
 
 #include "utils.h"
@@ -37,10 +40,22 @@ namespace
         return maxMemory - startMemory;
     }
 
+    std::string GetFreeFileName(const std::string& name, const std::string& extention)
+    {
+        for(unsigned num = 1;; num++)
+        {
+            const std::string candidate = name + std::to_string(num) + extention;
+            std::ifstream f(candidate.c_str());
+            if (!f.good())
+                return candidate;
+        }
+    }
+
     class Printer
     {
     public:
         explicit Printer(const std::string& methodName)
+            : file(GetFreeFileName(methodName + '_', ".csv"), std::ofstream::out)
         {
             Print("Testing method: " + methodName + ", Is Prime, Time, Memory\n");
         }
@@ -48,7 +63,12 @@ namespace
         void Print(const std::string& text)
         {
             std::cout << text;
+            file << text;
+            file.flush();
         }
+
+    private:
+        std::ofstream file;
     };
 }
 
@@ -70,19 +90,30 @@ namespace Prime
         return result;
     }
 
-    void Test(const std::function<bool (const BigNum &)> &function, const std::string &methodName, const std::atomic<bool> &stop)
+    void Test(const std::function<bool(const BigNum&)>& function, const std::string &methodName, const std::atomic<bool> &stop, const std::function<BigNum()>& feeder)
     {
         Printer printer(methodName);
-        BigNum number(1);
         while(!stop)
         {
+            const BigNum& number = feeder();
             printer.Print(number.ToString() + ", ");
 
             Prime::ResourcesInfo info;
             const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
             printer.Print(std::to_string(result) + ", " + std::to_string(info.time.count()) + ", " + std::to_string(info.memory) + "\n");
-
-            ++number;
         }
+    }
+
+    std::function<BigNum()> CreateIntrementalFeeder(const BigNum& startPoint)
+    {
+        std::shared_ptr<BigNum> num = std::make_shared<BigNum>(startPoint);
+        if (!num->IsOdd())
+            ++(*num);
+
+        return std::function<BigNum()>([num](){
+            BigNum result = *num;
+            *num = *num + 2;
+            return result;
+        });
     }
 }
