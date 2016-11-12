@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <cstdint>
+#include <string>
 
 namespace Prime
 {
