@@ -5,7 +5,7 @@
 #include <miller_rabin.h>
 #include <soe.h>
 
-#include "../tests/utils.h"
+#include "utils.h"
 #include "tests.h"
 
 int main(int argc, char *argv[])
