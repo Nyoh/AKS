@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     std::atomic<bool> stop{false};
     std::thread thread([&stop](){
-        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "AKS", stop);}
+        Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "AKS", stop, Prime::CreateIntrementalFeeder());}
     );
 
     std::cin.ignore();

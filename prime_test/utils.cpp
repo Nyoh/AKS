@@ -90,19 +90,27 @@ namespace Prime
         return result;
     }
 
-    void Test(const std::function<bool (const BigNum &)> &function, const std::string &methodName, const std::atomic<bool> &stop)
+    void Test(const std::function<bool(const BigNum&)>& function, const std::string &methodName, const std::atomic<bool> &stop, const std::function<BigNum()>& feeder)
     {
         Printer printer(methodName);
-        BigNum number(1);
         while(!stop)
         {
+            const BigNum& number = feeder();
             printer.Print(number.ToString() + ", ");
 
             Prime::ResourcesInfo info;
             const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
             printer.Print(std::to_string(result) + ", " + std::to_string(info.time.count()) + ", " + std::to_string(info.memory) + "\n");
-
-            ++number;
         }
+    }
+
+    std::function<BigNum()> CreateIntrementalFeeder(const BigNum& startPoint)
+    {
+        std::shared_ptr<BigNum> num = std::make_shared<BigNum>(startPoint);
+        return std::function<BigNum()>([num](){
+            BigNum result = *num;
+            ++(*num);
+            return result;
+        });
     }
 }
