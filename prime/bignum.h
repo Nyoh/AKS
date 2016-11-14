@@ -240,11 +240,11 @@ namespace Prime
                 return false;
             else
             {
-                for (auto i = data.size() - 1; i >= 0; i++)
+                for (auto i = data.rbegin(), ri = rhs.data.rbegin(); i != data.rend(); ++i, ++ri)
                 {
-                    if (data[i] < rhs.data[i])
+                    if (*i < *ri)
                         return true;
-                    else if (data[i] > rhs.data[i])
+                    else if (*i > *ri)
                         return false;
                 }
             }
@@ -562,7 +562,7 @@ namespace Prime
     inline BigNum BigNum::SquareRoot() const
     {
         BigNum x = BigNum(2);
-        x = BigNum::Pow(x, m_num.BitsNum() / 2);
+        x = BigNum::Pow(x, (m_num.BitsNum() + 1) / 2);
         while (true)
         {
             BigNum y = (x + *this / x) >> 1;
@@ -580,17 +580,21 @@ namespace Prime
     }
 
     template <>
-    bool BigNum::FromString(const std::string& string)
+    inline bool BigNum::FromString(const std::string& string)
     {
+        if (string.empty())
+            return false;
+
         for (auto i = string.begin(); i != string.end(); ++i)
             if (*i < '0' || *i > '9')
                 return false;
 
         BigNum result;
         BigNum adder;
+        BigNum ten(10);
         for (auto i = string.begin(); i != string.end(); ++i)
         {
-            result *= 10;
+            result *= ten;
             adder.m_num.data.front() = *i;
             result += adder;
         }

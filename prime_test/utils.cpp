@@ -70,6 +70,55 @@ namespace
     private:
         std::ofstream file;
     };
+
+    class FileFeeder
+    {
+    public:
+        FileFeeder(const std::string& fileName, std::atomic<bool>& stop)
+            : m_stop(stop)
+        {
+            std::ifstream file(fileName);
+            if (!file.good())
+            {
+                std::cout << fileName << " not found." << std::endl;
+                m_stop = true;
+                return;
+            }
+
+            while (!file.eof())
+            {
+                std::string stringNum;
+                Prime::BigNum num;
+                file >> stringNum;
+                if (!num.FromString(stringNum))
+                {
+                    std::cout << "Failed to parse number '" << stringNum << "'." << std::endl;
+                    continue;
+                }
+                m_nums.push_back(num);
+            }
+
+            if (!m_nums.empty())
+                m_current = m_nums.begin();
+            else
+                m_stop = true;
+        }
+
+        Prime::BigNum GetNum()
+        {
+            const auto& result = *m_current;
+
+            if (++m_current == m_nums.end())
+                m_stop = true;
+
+            return result;
+        }
+
+    private:
+        std::vector<Prime::BigNum> m_nums;
+        std::vector<Prime::BigNum>::const_iterator m_current;
+        std::atomic<bool>& m_stop;
+    };
 }
 
 namespace Prime
@@ -114,6 +163,14 @@ namespace Prime
             BigNum result = *num;
             *num = *num + 2;
             return result;
+        });
+    }
+
+    std::function<BigNum()> CreateFileFeeder(const std::string& fileName, std::atomic<bool>& stop)
+    {
+        std::shared_ptr<FileFeeder> feeder = std::make_shared<FileFeeder>(fileName, stop);
+        return std::function<BigNum()>([feeder](){
+            return feeder->GetNum();
         });
     }
 }

@@ -67,7 +67,7 @@ namespace Prime
             std::swap(*this, other);
         }
 
-        static Num<T> Pow(const Num<T>& base, std::uint64_t power)
+        static Num<T> Pow(Num<T> base, std::uint64_t power)
         {
             Num<T> result = Num<T>(1);
             while (power)
@@ -75,7 +75,7 @@ namespace Prime
                 if (power % 2)
                     result *= base;
 
-                result *= result;
+                base *= base;
                 power /= 2;
             }
 

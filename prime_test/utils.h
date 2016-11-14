@@ -19,6 +19,7 @@ namespace Prime
     void Test(const std::function<bool(const BigNum&)>& function, const std::string& methodName, const std::atomic<bool>& stop, const std::function<BigNum()>& feeder);
 
     std::function<BigNum()> CreateIntrementalFeeder(const BigNum& startPoint = BigNum(1));
+    std::function<BigNum()> CreateFileFeeder(const std::string& fileName, std::atomic<bool>& stop);
 }
 
 #endif // TEST_UTILS_H

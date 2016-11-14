@@ -30,8 +30,11 @@ namespace Prime
     inline std::uint32_t HighestBit(std::uint64_t value)
     {
         std::uint32_t result = 0;
-        while (value >>= 1)
+        while (value)
+        {
+            value >>= 1;
             result++;
+        }
 
         return result;
     }
