@@ -16,17 +16,18 @@ namespace Prime
         if (!rounds)
             rounds = value.BitsNum();
 
+        const Num<T>& valueMinusOne = value - 1;
         std::int64_t S = 0;
-        while (value.Bit(S) == false)
+        while (valueMinusOne.Bit(S) == false)
             S++;
 
-        Num<T> t = (value >> S);
+        Num<T> t = (valueMinusOne >> S);
 
         for (std::uint32_t round = 0; round != rounds; round++)
         {
             Num<T> a = Num<T>::Random(Num<T>(2), value - 2);
             Num<T> X = PowerMod(a, t, value);
-            if (X == 1 || X == value - 1)
+            if (X == 1 || X == valueMinusOne)
                 continue;
 
             bool continueRoundLoop = false;
@@ -35,7 +36,7 @@ namespace Prime
                 X = PowerMod(X, Num<T>(2), value);
                 if (X == 1)
                     return true;
-                else if (X == value - 1)
+                else if (X == valueMinusOne)
                 {
                     continueRoundLoop = true;
                     break;

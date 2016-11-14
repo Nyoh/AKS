@@ -501,15 +501,15 @@ namespace Prime
             result.data.reserve(std::max(a.data.size(), b.data.size()) + 1);
             result.data.resize(std::max(a.data.size(), b.data.size()));
 
-            const BigNumData& big = (a.data.size() > b.data.size() ? a : b);
-            const BigNumData& small = (a.data.size() > b.data.size() ? b : a);
+            const BigNumData& bigger = (a.data.size() > b.data.size() ? a : b);
+            const BigNumData& smaller = (a.data.size() > b.data.size() ? b : a);
 
             bool over = false;
-            for (size_t i = 0; i != big.data.size(); i++)
+            for (size_t i = 0; i != bigger.data.size(); i++)
             {
-                std::uint64_t chunkSum = big.data[i];
-                if (i < small.data.size())
-                    chunkSum += small.data[i];
+                std::uint64_t chunkSum = bigger.data[i];
+                if (i < smaller.data.size())
+                    chunkSum += smaller.data[i];
 
                 if (i >= result.data.size())
                     result.data.push_back(0);

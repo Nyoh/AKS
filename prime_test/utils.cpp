@@ -10,6 +10,9 @@
 #include <string>
 #include <thread>
 
+#include <miller_rabin.h>
+#include <trial_division.h>
+
 #include "utils.h"
 
 namespace
@@ -203,5 +206,38 @@ namespace Prime
         return std::function<BigNum()>([feeder](){
             return feeder->GetNum();
         });
+    }
+
+
+    void CreatePrimesFile()
+    {
+        std::ofstream file("primes.txt");
+        std::atomic<bool> stop{false};
+        std::thread thread([&stop, &file](){
+            BigNum num(7);
+            unsigned primesFound = 0;
+            while(!stop)
+            {
+                if (Prime::IsPrimeMillerRabin(num))// && Prime::IsPrimeTrialDivision(num))
+                {
+                    std::cout << num.ToString() << std::endl;
+                    file << num.ToString() << std::endl;
+
+                    if (primesFound == 9)
+                    {
+                        num <<= 1;
+                        primesFound = 0;
+                    }
+                    else
+                        primesFound++;
+                }
+                ++num;
+            }
+        });
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
     }
 }
