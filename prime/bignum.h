@@ -595,7 +595,7 @@ namespace Prime
         for (auto i = string.begin(); i != string.end(); ++i)
         {
             result *= ten;
-            adder.m_num.data.front() = *i;
+            adder.m_num.data.front() = (*i - '0');
             result += adder;
         }
 
