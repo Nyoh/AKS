@@ -223,7 +223,7 @@ namespace Prime
                     std::cout << num.ToString() << std::endl;
                     file << num.ToString() << std::endl;
 
-                    if (primesFound == 9)
+                    if (primesFound == 2)
                     {
                         num <<= 1;
                         primesFound = 0;
