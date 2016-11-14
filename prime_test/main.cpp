@@ -49,45 +49,6 @@ namespace
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
-
-    void TestAKS()
-    {
-        std::atomic<bool> stop{false};
-        std::thread thread([&stop](){
-            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS", stop, Prime::CreateIntrementalFeeder());}
-        );
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        stop = true;
-        if (thread.joinable())
-            thread.join();
-    }
-
-    void TestMillerRabin()
-    {
-        std::atomic<bool> stop{false};
-        std::thread thread([&stop](){
-            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "Miller-Rabin", stop, Prime::CreateIntrementalFeeder());}
-        );
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        stop = true;
-        if (thread.joinable())
-            thread.join();
-    }
-
-    void TestTrialDivision()
-    {
-        std::atomic<bool> stop{false};
-        std::thread thread([&stop](){
-            Prime::Test([](const Prime::BigNum& num){return Prime::IsPrimeTrialDivision(num);}, "Trial Division", stop, Prime::CreateIntrementalFeeder());}
-        );
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        stop = true;
-        if (thread.joinable())
-            thread.join();
-    }
 }
 
 int main(int argc, char *argv[])
@@ -95,9 +56,20 @@ int main(int argc, char *argv[])
     //TestBigNum();
 
     std::vector<std::pair<std::string, std::function<void()>>> menuOptions;
-    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test AKS", [](){TestAKS();}));
-    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test Miller-Rabin", [](){TestMillerRabin();}));
-    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Trial Division", [](){TestTrialDivision();}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test AKS", [](){
+        Prime::TestAsync([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS");}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test AKS from file", [](){
+        Prime::TestFromFileAsync([](const Prime::BigNum& num){return Prime::IsPrimeAKS(num);}, "AKS from file");}));
+
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test Miller-Rabin", [](){
+        Prime::TestAsync([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "Miller-Rabin");}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Test Miller-Rabin from file", [](){
+        Prime::TestFromFileAsync([](const Prime::BigNum& num){return Prime::IsPrimeMillerRabin(num);}, "Miller-Rabin from file");}));
+
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Trial Division", [](){
+        Prime::TestAsync([](const Prime::BigNum& num){return Prime::IsPrimeTrialDivision(num);}, "Trial Division");}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Trial Division from file", [](){
+        Prime::TestFromFileAsync([](const Prime::BigNum& num){return Prime::IsPrimeTrialDivision(num);}, "Trial Division from file");}));
 
     Menu("Main menu", menuOptions);
 

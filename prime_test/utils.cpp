@@ -139,7 +139,38 @@ namespace Prime
         return result;
     }
 
-    void Test(const std::function<bool(const BigNum&)>& function, const std::string &methodName, const std::atomic<bool> &stop, const std::function<BigNum()>& feeder)
+    void TestAsync(const std::function<bool(const BigNum&)>& function, const std::string &methodName)
+    {
+        std::atomic<bool> stop{false};
+        std::thread thread([&function, &methodName, &stop](){
+            Prime::TestSync(function, methodName, stop, CreateIntrementalFeeder());}
+        );
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
+    }
+
+    void TestFromFileAsync(const std::function<bool(const BigNum&)>& function, const std::string& methodName)
+    {
+        std::string fileName;
+        std::cout << "Enter file's name: ";
+        std::cin >> fileName;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::atomic<bool> stop{false};
+        std::thread thread([&function, &methodName, &stop, &fileName](){
+            Prime::TestSync(function, methodName, stop, CreateFileFeeder(fileName, stop));}
+        );
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        stop = true;
+        if (thread.joinable())
+            thread.join();
+    }
+
+    void TestSync(const std::function<bool(const BigNum&)>& function, const std::string &methodName, const std::atomic<bool> &stop, const std::function<BigNum()>& feeder)
     {
         Printer printer(methodName);
         while(!stop)
