@@ -60,7 +60,7 @@ namespace
         explicit Printer(const std::string& methodName)
             : file(GetFreeFileName(methodName + '_', ".csv"), std::ofstream::out)
         {
-            Print("Testing method: " + methodName + ", Is Prime, Time, Memory\n");
+            Print("Testing method: " + methodName + "\nN, log(N), Is Prime, Time, Memory\n");
         }
 
         void Print(const std::string& text)
@@ -179,7 +179,7 @@ namespace Prime
         while(!stop)
         {
             const BigNum& number = feeder();
-            printer.Print(number.ToString() + ", ");
+            printer.Print(number.ToString() + ", " + std::to_string(number.BitsNum()) + ", ");
 
             Prime::ResourcesInfo info;
             const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
@@ -208,14 +208,12 @@ namespace Prime
         });
     }
 
-
     void CreatePrimesFile()
     {
         std::ofstream file("primes.txt");
         std::atomic<bool> stop{false};
         std::thread thread([&stop, &file](){
             BigNum num(7);
-            unsigned primesFound = 0;
             while(!stop)
             {
                 if (Prime::IsPrimeMillerRabin(num))// && Prime::IsPrimeTrialDivision(num))
@@ -223,15 +221,10 @@ namespace Prime
                     std::cout << num.ToString() << std::endl;
                     file << num.ToString() << std::endl;
 
-                    if (primesFound == 2)
-                    {
-                        num <<= 1;
-                        primesFound = 0;
-                    }
-                    else
-                        primesFound++;
+                    num <<= 1;
                 }
-                ++num;
+                else
+                    ++num;
             }
         });
 
