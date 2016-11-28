@@ -50,7 +50,7 @@ namespace Prime
                 Polynomial<Num<T>> rhs;
                 rhs.SetDegree(1);
                 rhs[1] = Num<T>(1);
-                rhs.PowMod(value, r, value);  // lhs = x^r
+                rhs.PowMod(value, r, value);  // rhs = x^r
 
                 rhs[0] += Num<T>(i);
                 rhs.Mod(r, value);

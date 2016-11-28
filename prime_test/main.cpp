@@ -71,6 +71,11 @@ int main(int argc, char *argv[])
     menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Trial Division from file", [](){
         Prime::TestFromFileAsync([](const Prime::BigNum& num){return Prime::IsPrimeTrialDivision(num);}, "Trial Division from file");}));
 
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Sieve of Eratosthenes", [](){
+        Prime::TestAsync([](const Prime::BigNum& num){return Prime::IsPrimeSoE(num);}, "Sieve of Eratosthenes");}));
+    menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Sieve of Eratosthenes from file", [](){
+        Prime::TestFromFileAsync([](const Prime::BigNum& num){return Prime::IsPrimeSoE(num);}, "Sieve of Eratosthenes from file");}));
+
     menuOptions.push_back(std::make_pair<std::string, std::function<void()>>("Generate Primes File", [](){
         Prime::CreatePrimesFile();}));
 

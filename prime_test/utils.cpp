@@ -171,14 +171,12 @@ namespace Prime
         });
     }
 
-
     void CreatePrimesFile()
     {
         std::ofstream file("primes.txt");
         std::atomic<bool> stop{false};
         std::thread thread([&stop, &file](){
             BigNum num(7);
-            unsigned primesFound = 0;
             while(!stop)
             {
                 if (Prime::IsPrimeMillerRabin(num))// && Prime::IsPrimeTrialDivision(num))
@@ -186,14 +184,9 @@ namespace Prime
                     std::cout << num.ToString() << std::endl;
                     file << num.ToString() << std::endl;
 
-                    if (primesFound == 2)
-                    {
                         num <<= 1;
-                        primesFound = 0;
                     }
                     else
-                        primesFound++;
-                }
                 ++num;
             }
         });

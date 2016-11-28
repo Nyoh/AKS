@@ -42,6 +42,22 @@ namespace Prime
 
         const std::vector<bool> m_sieve; // false - prime, true - not
     };
+
+    template <typename T>
+    bool IsPrimeSoE(const Num<T>& value)
+    {
+        try
+        {
+            const std::string& valString = value.ToString();
+            const std::uint64_t val = std::stoull(valString);
+            SoE seo(val);
+            return seo.IsPrime(val);
+        }
+        catch(...)
+        {
+            return false;
+        }
+    }
 }
 
 #endif // SOE_H
