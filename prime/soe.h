@@ -24,7 +24,7 @@ namespace Prime
         static std::vector<bool> CreateSieve(const size_t size)
         {
             std::vector<bool> sieve;
-            sieve.resize(size);
+            sieve.resize(size + 1);
             sieve[0] = true;
             sieve[1] = true;
             const auto limit = std::sqrt(size);

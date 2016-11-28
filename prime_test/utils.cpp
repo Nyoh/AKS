@@ -1,9 +1,3 @@
-#ifdef _WIN32
-#define NOMINMAX
-#include "windows.h"
-#include "psapi.h"
-#endif
-
 #include <future>
 #include <iostream>
 #include <fstream>
@@ -17,32 +11,6 @@
 
 namespace
 {
-    std::uint64_t GetMemoryUsed()
-    {
-#ifdef _WIN32
-        PROCESS_MEMORY_COUNTERS_EX pmc;
-        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-        return pmc.PrivateUsage;
-#else
-        return 0;
-#endif
-    }
-
-    std::uint64_t MemoryCheck(const std::atomic<bool>& stop)
-    {
-        const auto startMemory = GetMemoryUsed();
-        auto maxMemory = startMemory;
-        while(!stop)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            const auto currentMemory = GetMemoryUsed();
-            if (currentMemory > maxMemory)
-                maxMemory = currentMemory;
-        }
-
-        return maxMemory - startMemory;
-    }
-
     std::string GetFreeFileName(const std::string& name, const std::string& extention)
     {
         for(unsigned num = 1;; num++)
@@ -60,7 +28,7 @@ namespace
         explicit Printer(const std::string& methodName)
             : file(GetFreeFileName(methodName + '_', ".csv"), std::ofstream::out)
         {
-            Print("Testing method: " + methodName + ", Is Prime, Time, Memory\n");
+            Print("Testing method: " + methodName + "\nN, log(N), Is Prime, Duration\n");
         }
 
         void Print(const std::string& text)
@@ -126,18 +94,13 @@ namespace
 
 namespace Prime
 {
-    bool TestResources(const std::function<bool()>& function, ResourcesInfo& info)
+    bool TestResources(const std::function<bool()>& function, std::chrono::milliseconds& duration)
     {
-        std::atomic<bool> memCheckStop{false};
-        std::future<std::uint64_t> memUsed = std::async(std::launch::async, [&memCheckStop](){return MemoryCheck(memCheckStop);});
-
         const auto& startTime = std::chrono::high_resolution_clock::now();
         const bool result = function();
         const auto& endTime = std::chrono::high_resolution_clock::now();
-        memCheckStop = true;
 
-        info.time = std::chrono::duration_cast<decltype(info.time)>(endTime - startTime);
-        info.memory = memUsed.get();
+        duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
 
         return result;
     }
@@ -179,11 +142,11 @@ namespace Prime
         while(!stop)
         {
             const BigNum& number = feeder();
-            printer.Print(number.ToString() + ", ");
+            printer.Print(number.ToString() + ", " + std::to_string(number.BitsNum()) + ", ");
 
-            Prime::ResourcesInfo info;
-            const bool result = Prime::TestResources([&function, &number](){return function(number);}, info);
-            printer.Print(std::to_string(result) + ", " + std::to_string(info.time.count()) + ", " + std::to_string(info.memory) + "\n");
+            std::chrono::milliseconds duration;
+            const bool result = Prime::TestResources([&function, &number](){return function(number);}, duration);
+            printer.Print(std::to_string(result) + ", " + std::to_string(duration.count()) + "\n");
         }
     }
 
